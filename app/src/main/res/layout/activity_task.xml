@@ -4,11 +4,13 @@
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="match_parent"-->
     <!--tools:context=".Activities.MainActivity">-->
+    <!---->
     <!--<fragment-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--class="com.example.manisharana.todoapp.Fragments.TaskListFragment"-->
-        <!--android:id="@+id/fragment_task_list_view"/>-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--class="com.example.manisharana.todoapp.Fragments.NewTaskFragment"-->
+    <!--android:id="@+id/fragment_new_task_view"/>-->
+
 <!--</RelativeLayout>-->
 
 <android.support.design.widget.CoordinatorLayout
@@ -39,22 +41,20 @@ android:layout_height="match_parent">
         <fragment
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            class="com.example.manisharana.todoapp.Fragments.TaskListFragment"
-            android:id="@+id/fragment_task_list_view"/>
+            class="com.example.manisharana.todoapp.Fragments.NewTaskFragment"
+            android:id="@+id/fragment_new_task_view"/>
     </LinearLayout>
 
 </LinearLayout>
 
 <android.support.design.widget.FloatingActionButton
-    android:id="@+id/fab_add_task"
+    android:id="@+id/fab_new_task"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
     android:clickable="true"
-    android:onClick="navigateToTaskActivity"
     android:src="@mipmap/ic_launcher"
     app:layout_anchor="@id/actionBar"
     app:layout_anchorGravity="bottom|right|end"/>
 
 </android.support.design.widget.CoordinatorLayout>
-
