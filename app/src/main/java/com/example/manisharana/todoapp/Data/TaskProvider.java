@@ -43,13 +43,28 @@ public class TaskProvider extends ContentProvider {
 
 
     static final int TASK = 100;
-    static final int TASK_WITH_TAG = 101;
+    static final int ALL_TASKS = 101;
     static final int TASK_WITH_TAG_AND_USER = 102;
 
     static final int TAG = 200;
+    static final int ALL_TAGS = 201;
+
+    static final int ALL_USERS = 300;
+
 
     public static UriMatcher getUriMatcher() {
-        return uriMatcher;
+
+        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+        final String authority = TaskEntry.CONTENT_AUTHORITY;
+
+        matcher.addURI(authority, TaskEntry.TASK_PATH+"/#", TASK);
+        matcher.addURI(authority, TaskEntry.TASK_PATH + "/*", ALL_TASKS);
+        matcher.addURI(authority, TaskTagEntry.TASK_TAG_PATH + "/*", TAG);
+        matcher.addURI(authority, TaskTagEntry.TASK_TAG_PATH+"/#", ALL_TAGS);
+        matcher.addURI(authority, UserEntry.USER_PATH+"/#", ALL_USERS);
+
+        return matcher;
+
     }
 
     @Override
@@ -63,7 +78,7 @@ public class TaskProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] columns, String selection, String[] selectArgs, String sortOrder) {
         SQLiteDatabase readDb = taskDbHelper.getReadableDatabase();
         Cursor query;
-        String groupByCondition="";
+        String groupByCondition=TaskEntry.COLUMN_DATE;
 
         switch (uriMatcher.match(uri)) {
             case TASK:
@@ -72,7 +87,7 @@ public class TaskProvider extends ContentProvider {
             case TAG:
                 query = readDb.query(TaskTagEntry.TABLE_NAME, columns, selection, selectArgs, null, null, sortOrder);
                 break;
-            case TASK_WITH_TAG:
+            case ALL_TASKS:
                 query = sQueryTaskAndTagBuilder.query(taskDbHelper.getReadableDatabase(), columns, selection, selectArgs, groupByCondition, null, sortOrder);
                 break;
             case TASK_WITH_TAG_AND_USER:
@@ -87,16 +102,6 @@ public class TaskProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(Uri uri) {
-        switch (uriMatcher.match(uri)) {
-            case TASK:
-                return TaskEntry.CONTENT_ITEM_TYPE;
-            case TASK_WITH_TAG:
-                return TaskEntry.CONTENT_LIST_TYPE;
-            case TASK_WITH_TAG_AND_USER:
-                return TaskEntry.CONTENT_ITEM_TYPE;
-            case TAG:
-                return TaskTagEntry.CONTENT_LIST_TYPE;
-        }
         return null;
     }
 
@@ -121,7 +126,7 @@ public class TaskProvider extends ContentProvider {
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
-            case TASK_WITH_TAG:
+            case ALL_TASKS:
                 returnUri = null;
                 break;
             case TASK_WITH_TAG_AND_USER:

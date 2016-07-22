@@ -19,6 +19,7 @@ public class TaskDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         List<String> queries = new LinkedList<>();
         queries.add(UserEntry.getCreateUserEntry());
+        queries.add(UserEntry.getInsertIntialData());
         queries.add(TaskTagEntry.getCreateTaskTagEntry());
         queries.add(TaskTagEntry.getInsertIntialData());
         queries.add(TaskEntry.getCreateTaskEntry());

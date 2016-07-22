@@ -1,16 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--xmlns:tools="http://schemas.android.com/tools"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--tools:context=".Activities.MainActivity">-->
-    <!--<fragment-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--class="com.example.manisharana.todoapp.Fragments.TaskListFragment"-->
-        <!--android:id="@+id/fragment_task_list_view"/>-->
-<!--</RelativeLayout>-->
-
 <android.support.design.widget.CoordinatorLayout
 xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -52,7 +40,7 @@ android:layout_height="match_parent">
     android:layout_margin="16dp"
     android:clickable="true"
     android:onClick="navigateToTaskActivity"
-    android:src="@mipmap/ic_launcher"
+    android:src="@drawable/ic_action_action_note_add"
     app:layout_anchor="@id/actionBar"
     app:layout_anchorGravity="bottom|right|end"/>
 

@@ -15,7 +15,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.TaskAcitivity" android:label="Tasks" android:parentActivityName=".Activities.MainActivity">
+        <activity android:name=".Activities.TaskAcitivity" android:label="Task" android:parentActivityName=".Activities.MainActivity">
 
         </activity>
         <activity android:name=".Activities.TagListActivity" android:label="Labels" android:parentActivityName=".Activities.MainActivity">

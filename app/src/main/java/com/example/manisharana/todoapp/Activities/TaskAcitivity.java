@@ -11,6 +11,7 @@ public class TaskAcitivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
+        getSupportActionBar().setElevation(0);
 
     }
 }

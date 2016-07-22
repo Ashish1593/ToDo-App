@@ -14,9 +14,9 @@ public class TaskEntry implements BaseColumns{
     public static final String COLUMN_STATUS = "state";
     public static final String COLUMN_TAG_ID = "task_tag_id";
     public static final String COLUMN_USER_ID = "user_id";
-    public static final String COLUMN_ATTACHMENT_ID = "attachment_id";
+//    public static final String COLUMN_ATTACHMENT_ID = "attachment_id";
 
-    private static final String TASK_PATH = "task";
+    public static final String TASK_PATH = "task";
 
     public static final String CONTENT_AUTHORITY = "com.example.manisharana.todoapp";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://"+ CONTENT_AUTHORITY);
@@ -39,4 +39,5 @@ public class TaskEntry implements BaseColumns{
     public static Uri buildTaskUri(long insert) {
         return ContentUris.withAppendedId(CONTENT_URI,insert);
     }
+
 }
