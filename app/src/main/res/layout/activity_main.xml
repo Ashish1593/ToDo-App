@@ -40,7 +40,7 @@ android:layout_height="match_parent">
     android:layout_margin="16dp"
     android:clickable="true"
     android:onClick="navigateToTaskActivity"
-    android:src="@drawable/ic_action_action_note_add"
+    android:src="@drawable/ic_content_add"
     app:layout_anchor="@id/actionBar"
     app:layout_anchorGravity="bottom|right|end"/>
 

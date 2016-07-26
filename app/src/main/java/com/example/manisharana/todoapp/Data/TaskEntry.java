@@ -30,14 +30,22 @@ public class TaskEntry implements BaseColumns{
         return "CREATE TABLE "+ TABLE_NAME + " ( "
                 + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_TITLE + " TEXT NOT NULL, "
-                + COLUMN_DATE + "INTEGER NOT NULL, "
+                + COLUMN_DATE + " INTEGER NOT NULL, "
                 + COLUMN_DESC + " TEXT, "
                 + COLUMN_STATUS + " TEXT, "
-                + COLUMN_REMIND_ME + " BOOLEAN NOT NULL );";
+                + COLUMN_REMIND_ME + " BOOLEAN NOT NULL ,"
+                +COLUMN_USER_ID + " INTEGER NOT NULL, "
+                +COLUMN_TAG_ID + " INTEGER NOT NULL, "
+                + " FOREIGN KEY (" + COLUMN_USER_ID + ") REFERENCES "
+                + UserEntry.TABLE_NAME + " (" + UserEntry._ID + "), "
+                + " FOREIGN KEY (" + COLUMN_TAG_ID + ") REFERENCES "
+                + TaskTagEntry.TABLE_NAME + " (" + TaskTagEntry._ID +"));";
     }
 
     public static Uri buildTaskUri(long insert) {
         return ContentUris.withAppendedId(CONTENT_URI,insert);
     }
+
+
 
 }

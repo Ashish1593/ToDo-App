@@ -1,8 +1,6 @@
 package com.example.manisharana.todoapp.Activities;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -20,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void  navigateToTaskActivity(View view){
-        Intent intent = new Intent(this, TaskAcitivity.class);
+        Intent intent = new Intent(this, TaskActivity.class);
         startActivity(intent);
     }
 

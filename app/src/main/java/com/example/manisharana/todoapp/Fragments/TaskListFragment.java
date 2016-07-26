@@ -38,7 +38,6 @@ public class TaskListFragment extends Fragment implements LoaderManager.LoaderCa
             TaskEntry.COLUMN_STATUS,
             TaskTagEntry.COLUMN_TITLE,
             TaskTagEntry.COLUMN_COLOR,
-            UserEntry.COLUMN_NAME
 };
     public static final int COL_TASK_ID = 0;
     public static final int COL_TASK_TITLE = 1;
@@ -67,26 +66,26 @@ public class TaskListFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+       // setHasOptionsMenu(true);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_edit_tag_list:
-                Intent intent = new Intent(getActivity(), TagListActivity.class);
-                startActivity(intent);
-                return true;
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()){
+//            case R.id.action_edit_tag_list:
+//                Intent intent = new Intent(getActivity(), TagListActivity.class);
+//                startActivity(intent);
+//                return true;
+//
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.activity_main_menu,menu);
-    }
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        super.onCreateOptionsMenu(menu, inflater);
+//        inflater.inflate(R.menu.activity_main_menu,menu);
+//    }
 
 
     @Override

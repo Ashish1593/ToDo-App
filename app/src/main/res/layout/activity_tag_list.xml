@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
-        android:src="@drawable/ic_action_action_note_add"
+        android:src="@drawable/ic_content_add"
         app:layout_anchor="@id/actionBar_task_tag"
         app:layout_anchorGravity="bottom|right|end"/>
 

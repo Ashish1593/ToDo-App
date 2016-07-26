@@ -23,16 +23,16 @@ public class UserEntry implements BaseColumns {
     public static String getCreateUserEntry() {
         return "CREATE TABLE "+ TABLE_NAME +" ( "
                 + _ID + " INTEGER PRIMARY KEY, "
-                + COLUMN_NAME + " TEXT NOT NULL);";
+                + COLUMN_NAME + " TEXT UNIQUE NOT NULL);";
     }
 
     public static String getInsertIntialData() {
         return "INSERT INTO "+ TABLE_NAME + " ( "+COLUMN_NAME
-                +" ) VALUES ( "+DEFAULT_VALUE_MONIKA+" ), ( "
-                + DEFAULT_VALUE_SANDHYA+ " ), ( "
-                + DEFAULT_VALUE_NEHA+ " ), ( "
-                + DEFAULT_VALUE_NIKHIL+ " ), ( "
-                + DEFAULT_VALUE_NITHIN+" );" ;
+                +" ) VALUES ( '"+DEFAULT_VALUE_SANDHYA+"' ),\n( '"
+                + DEFAULT_VALUE_MONIKA+ "' ),\n ( '"
+                + DEFAULT_VALUE_NEHA+ "' ),\n( '"
+                + DEFAULT_VALUE_NIKHIL +"' ),\n( '"
+                + DEFAULT_VALUE_NITHIN+"' );" ;
     }
 
 }

@@ -33,13 +33,13 @@ public class TaskListAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         long dateInMillis = cursor.getLong(TaskListFragment.COL_TASK_DATE);
-        viewHolder.dateView.setText(Utility.getFormattedDate(dateInMillis));
+        viewHolder.dateView.setText(Utility.getFormattedDateAndTime(dateInMillis));
 
-        String title = cursor.getString(TaskListFragment.COL_TAG_TITLE);
+        String title = cursor.getString(TaskListFragment.COL_TASK_TITLE);
         viewHolder.titleView.setText(title);
 
-        String tagColor = cursor.getString(TaskListFragment.COL_TAG_COLOR);
-        viewHolder.tagView.setBackgroundColor(Color.parseColor(tagColor));
+//        String tagColor = cursor.getString(TaskListFragment.COL_TAG_COLOR);
+//        viewHolder.tagView.setBackgroundColor(Color.parseColor(tagColor));
 
     }
 

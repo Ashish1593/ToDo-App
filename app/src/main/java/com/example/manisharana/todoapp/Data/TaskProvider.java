@@ -57,11 +57,11 @@ public class TaskProvider extends ContentProvider {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = TaskEntry.CONTENT_AUTHORITY;
 
-        matcher.addURI(authority, TaskEntry.TASK_PATH+"/#", TASK);
         matcher.addURI(authority, TaskEntry.TASK_PATH + "/*", ALL_TASKS);
         matcher.addURI(authority, TaskTagEntry.TASK_TAG_PATH + "/*", TAG);
         matcher.addURI(authority, TaskTagEntry.TASK_TAG_PATH+"/#", ALL_TAGS);
         matcher.addURI(authority, UserEntry.USER_PATH+"/#", ALL_USERS);
+        matcher.addURI(authority, TaskEntry.TASK_PATH, TASK);
 
         return matcher;
 

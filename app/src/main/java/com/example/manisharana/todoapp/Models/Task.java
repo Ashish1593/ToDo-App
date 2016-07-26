@@ -6,7 +6,7 @@ public class Task {
     private boolean remindMeFlag;
     private long date;
     private String attachment;
-    private State state;
+    private String state;
     private TaskTag tag;
     private User user;
 
@@ -53,11 +53,11 @@ public class Task {
         this.attachment = attachment;
     }
 
-    public State getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(State state) {
+    public void setState(String state) {
         this.state = state;
     }
 

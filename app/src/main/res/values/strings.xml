@@ -8,4 +8,5 @@
     <string name="at_symbol">\@</string>
     <string name="title_activity_fab">Fab</string>
     <string name="view_labels">View Tags</string>
+    <string name="error">Error</string>
 </resources>

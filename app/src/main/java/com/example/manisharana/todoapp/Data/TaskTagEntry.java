@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
 
 public class TaskTagEntry implements BaseColumns {
     public static final String TABLE_NAME = "task_tag";
-    public static final String COLUMN_TITLE = "title";
+    public static final String COLUMN_TITLE = "tag_title";
     public static final String COLUMN_COLOR = "color";
     private static final String DEFAULT_VALUE_HOME = "Home";
     private static final String DEFAULT_COLOR_HOME = "#16a085";
@@ -29,17 +29,19 @@ public class TaskTagEntry implements BaseColumns {
 
     public static String getCreateTaskTagEntry() {
         return "CREATE TABLE "+ TABLE_NAME + " ( "
-                + _ID + "INTEGER PRIMARY KEY"
-                + COLUMN_TITLE + " TEXT NOT NULL, "
-                + COLUMN_COLOR + " TEXT NOT NULL );";
+                + _ID + " INTEGER PRIMARY KEY,"
+                + COLUMN_TITLE + " TEXT UNIQUE NOT NULL, "
+                + COLUMN_COLOR + " TEXT NOT NULL , "
+                + " UNIQUE( "+COLUMN_TITLE +" , "+ COLUMN_COLOR
+                + " ) ON CONFLICT REPLACE);";
     }
 
     public static String getInsertIntialData() {
-        return "INSERT INTO "+ TABLE_NAME + " ( "+COLUMN_TITLE+" , "+COLUMN_COLOR
-                +") VALUES ( "+DEFAULT_VALUE_HOME+", "+ DEFAULT_COLOR_HOME +" ), ( "
-                + DEFAULT_VALUE_WORK+", "+ DEFAULT_COLOR_WORK +" ), ( "
-                + DEFAULT_VALUE_PERSONAL+", "+ DEFAULT_COLOR_PERSONAL +" ), ( "
-                + DEFAULT_VALUE_SHOPPING+", "+ DEFAULT_COLOR_SHOPPING +" );" ;
+        return "INSERT INTO " + TABLE_NAME + " ( " + COLUMN_TITLE + " , " + COLUMN_COLOR
+                + ") VALUES ( '" + DEFAULT_VALUE_HOME + "' , '" + DEFAULT_COLOR_HOME + "' ),\n ( '"
+                + DEFAULT_VALUE_WORK + "' , '" + DEFAULT_COLOR_WORK + "' ), \n( '"
+                + DEFAULT_VALUE_PERSONAL + "' , '" + DEFAULT_COLOR_PERSONAL + "' ),\n( '"
+                + DEFAULT_VALUE_SHOPPING + "' , '" + DEFAULT_COLOR_SHOPPING + "' );";
     }
 
     public static Uri buildTagUri(long insertedId) {
