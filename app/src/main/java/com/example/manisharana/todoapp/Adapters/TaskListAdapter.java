@@ -32,7 +32,9 @@ public class TaskListAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
+
         long dateInMillis = cursor.getLong(TaskListFragment.COL_TASK_DATE);
+        viewHolder.dayName.setText(Utility.getFriendlyDayString(context ,dateInMillis));
         viewHolder.dateView.setText(Utility.getFormattedDateAndTime(dateInMillis));
 
         String title = cursor.getString(TaskListFragment.COL_TASK_TITLE);
@@ -48,9 +50,11 @@ public class TaskListAdapter extends CursorAdapter {
         public final TextView dateView;
         public final TextView titleView;
         public final ImageView tagView;
-       // public final TextView removeButton;
+        private final TextView dayName;
+        // public final TextView removeButton;
 
         public ViewHolder(View view) {
+            dayName = (TextView) view.findViewById(R.id.textView_day);
             tagView = (ImageView) view.findViewById(R.id.image_view_tag_color);
             titleView = (TextView) view.findViewById(R.id.text_view_task_title);
             dateView = (TextView) view.findViewById(R.id.text_view_task_time);

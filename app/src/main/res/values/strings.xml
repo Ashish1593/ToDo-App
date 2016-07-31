@@ -9,4 +9,6 @@
     <string name="title_activity_fab">Fab</string>
     <string name="view_labels">View Tags</string>
     <string name="error">Error</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
 </resources>

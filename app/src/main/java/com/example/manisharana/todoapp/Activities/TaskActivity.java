@@ -147,7 +147,7 @@ public class TaskActivity extends AppCompatActivity{
                 public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                     mDateView.setText(year + "-" + (month + 1) + "-" + day);
                     mYear = year;
-                    mMonth = month+1;
+                    mMonth = month;
                     mDay = day;
                 }
             };
