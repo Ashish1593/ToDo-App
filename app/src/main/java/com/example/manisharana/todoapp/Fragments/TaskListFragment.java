@@ -10,13 +10,16 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.manisharana.todoapp.Activities.TagListActivity;
 import com.example.manisharana.todoapp.Adapters.TaskListAdapter;
@@ -48,7 +51,6 @@ public class TaskListFragment extends Fragment implements LoaderManager.LoaderCa
     public static final int COL_TAG_TITLE = 6;
     public static final int COL_TAG_COLOR = 7;
     public static final int COL_USER_NAME = 8;
-
 
 
     @Nullable

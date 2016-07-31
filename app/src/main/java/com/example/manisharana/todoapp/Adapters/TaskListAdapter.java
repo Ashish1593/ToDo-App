@@ -4,17 +4,25 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.manisharana.todoapp.Data.TaskEntry;
 import com.example.manisharana.todoapp.Fragments.TaskListFragment;
 import com.example.manisharana.todoapp.R;
 
 public class TaskListAdapter extends CursorAdapter {
+    private String taskId;
+
     public TaskListAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
@@ -25,13 +33,30 @@ public class TaskListAdapter extends CursorAdapter {
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
 
+        viewHolder.removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LinearLayout parent = (LinearLayout) view.getParent();
+                TextView textIdView = (TextView) parent.findViewById(R.id.text_view_task_id);
+                taskId = textIdView.getText().toString();
+                slideOutView(parent);
+                deleteTask(taskId);
+            }
+        });
+
+
         return view;
+    }
+
+    private void deleteTask(String taskId) {
+        mContext.getContentResolver().delete(TaskEntry.CONTENT_URI,TaskEntry.TABLE_NAME+"."+TaskEntry._ID+" = ? ",new String[]{taskId});
+       // notifyDataSetChanged();
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
-
+        viewHolder.taskIdView.setText(String.valueOf(cursor.getInt(TaskListFragment.COL_TASK_ID)));
 
         long dateInMillis = cursor.getLong(TaskListFragment.COL_TASK_DATE);
         viewHolder.dayName.setText(Utility.getFriendlyDayString(context ,dateInMillis));
@@ -51,15 +76,67 @@ public class TaskListAdapter extends CursorAdapter {
         public final TextView titleView;
         public final ImageView tagView;
         private final TextView dayName;
-        // public final TextView removeButton;
+        public final ImageButton removeButton;
+        private final TextView taskIdView;
 
         public ViewHolder(View view) {
             dayName = (TextView) view.findViewById(R.id.textView_day);
+            taskIdView = (TextView) view.findViewById(R.id.text_view_task_id);
+
             tagView = (ImageView) view.findViewById(R.id.image_view_tag_color);
             titleView = (TextView) view.findViewById(R.id.text_view_task_title);
             dateView = (TextView) view.findViewById(R.id.text_view_task_time);
        //     userImage = (ImageView) view.findViewById(R.id.image_view_user_image);
-       //     removeButton = (Button) view.findViewById(R.id.button_delete_task);
+            removeButton = (ImageButton) view.findViewById(R.id.image_button_delete_task);
         }
     }
+
+    private void slideOutView(View view) {
+        Animation slideOut = AnimationUtils.loadAnimation(view.getContext(), R.anim.slide_out_right);
+        if (slideOut != null) {
+            slideOut.setAnimationListener(new ViewAnimationListener(view) {
+                @Override
+                protected void onAnimationStart(View view, Animation animation) {
+
+                }
+
+                @Override
+                protected void onAnimationEnd(View view, Animation animation) {
+                    view.setVisibility(View.GONE);
+                }
+            });
+            view.startAnimation(slideOut);
+        }
+    }
+
+
+    private abstract class ViewAnimationListener implements Animation.AnimationListener {
+
+        private final View view;
+
+        protected ViewAnimationListener(View view) {
+            this.view = view;
+        }
+
+        @Override
+        public void onAnimationStart(Animation animation) {
+            onAnimationStart(this.view, animation);
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            onAnimationEnd(this.view, animation);
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+
+        protected abstract void onAnimationStart(View view, Animation animation);
+        protected abstract void onAnimationEnd(View view, Animation animation);
+    }
+
+
+
 }
