@@ -11,7 +11,6 @@
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/textView_day"
-            android:text="Monday"
             android:textSize="18sp"
             android:paddingLeft="8dp"
             android:layout_width="match_parent"
@@ -20,20 +19,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-    <FrameLayout
-        android:layout_width="50dp"
-        android:layout_gravity="center"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/image_view_tag_color"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_action_label_outline"
+        <ImageButton
+            android:id="@+id/image_view_task_status"
             android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/task_status_button"
             android:layout_height="wrap_content"/>
-
-    </FrameLayout>
-    <LinearLayout
+        <LinearLayout
         android:layout_width="0dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
@@ -44,7 +36,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="My First Task"
             android:textSize="18sp"
             android:fontFamily="sans-serif-condensed"
         android:id="@+id/text_view_task_title"/>
@@ -53,7 +44,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="14sp"
-            android:text="task time"
             android:fontFamily="sans-serif-condensed"
             android:id="@+id/text_view_task_time"/>
     </LinearLayout>
@@ -62,7 +52,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:layout_weight="0.5"
-        android:id="@+id/image_view_user_image"/>
+        android:id="@+id/image_view_tag_color"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
