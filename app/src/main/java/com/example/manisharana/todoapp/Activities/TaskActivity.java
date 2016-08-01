@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class TaskActivity extends AppCompatActivity{
+public class TaskActivity extends AppCompatActivity {
 
     private TextView mDateView;
     private TextView mTimeView;
@@ -41,7 +41,7 @@ public class TaskActivity extends AppCompatActivity{
     private Spinner mUserView;
     private Spinner mLabelView;
     private TextView mTitleView;
-    private TaskDbHelper db ;
+    private TaskDbHelper db;
 
     private int mYear;
     private int mMonth;
@@ -71,43 +71,55 @@ public class TaskActivity extends AppCompatActivity{
         fabButton = (FloatingActionButton) findViewById(R.id.fab_new_task);
 
         loadSpinnerData();
-        }
+    }
 
     public long saveTask(View view) {
         boolean remindMe;
+        long taskId;
         String active = "active";
         String title = mTitleView.getText().toString();
         String desc = mDescriptionView.getText().toString();
+        selectedTimeInMillis = getSelectedTime(mYear, mMonth, mDay, mHour, mMinute);
+        int userId = getUserID();
+        int tagId = getTagID();
         if (mRemindMe.isChecked()) {
             remindMe = true;
         } else
             remindMe = false;
 
-        long taskId;
-       // Cursor cursor = this.getContentResolver().query(TaskEntry.CONTENT_URI, new String[]{TaskEntry._ID}, null, null, null);
-      //  if (cursor.moveToFirst()) {
-      //      int taskIdIndex = cursor.getColumnIndex(TaskEntry._ID);
-      //      taskId = cursor.getLong(taskIdIndex);
-      //  } else {
-            selectedTimeInMillis = getSelectedTime(mYear, mMonth, mDay, mHour, mMinute);
-            ContentValues values = new ContentValues();
+        String[] selectionArgs = {title, String.valueOf(selectedTimeInMillis), desc, active, String.valueOf(remindMe), String.valueOf(tagId), String.valueOf(userId)};
+        Cursor cursor = this.getContentResolver().query(TaskEntry.CONTENT_URI, new String[]{TaskEntry._ID}, getDefaultSelectionQuery(), selectionArgs, null);
 
+        if (cursor.moveToFirst()) {
+            int taskIdIndex = cursor.getColumnIndex(TaskEntry._ID);
+            taskId = cursor.getLong(taskIdIndex);
+        } else {
+            ContentValues values = new ContentValues();
             values.put(TaskEntry.COLUMN_TITLE, title);
             values.put(TaskEntry.COLUMN_DATE, selectedTimeInMillis);
             values.put(TaskEntry.COLUMN_DESC, desc);
             values.put(TaskEntry.COLUMN_STATUS, active);
-            values.put(TaskEntry.COLUMN_USER_ID, getUserID());
-            values.put(TaskEntry.COLUMN_TAG_ID, getTagID());
+            values.put(TaskEntry.COLUMN_USER_ID, userId);
+            values.put(TaskEntry.COLUMN_TAG_ID, tagId);
             values.put(TaskEntry.COLUMN_REMIND_ME, remindMe);
 
             Uri insertedUri = this.getContentResolver().insert(TaskEntry.CONTENT_URI, values);
-
             taskId = ContentUris.parseId(insertedUri);
-    //  }
+        }
 
-    //    cursor.close();
+        cursor.close();
         return taskId;
 
+    }
+
+    private String getDefaultSelectionQuery() {
+        return TaskEntry.COLUMN_TITLE + " = ? and "
+                + TaskEntry.COLUMN_DATE + " = ? and "
+                + TaskEntry.COLUMN_DESC + " = ? and "
+                + TaskEntry.COLUMN_STATUS + " = ? and "
+                + TaskEntry.COLUMN_REMIND_ME + " = ? and "
+                + TaskEntry.COLUMN_TAG_ID + " = ? and "
+                + TaskEntry.COLUMN_USER_ID + " = ? ";
     }
 
     private int getTagID() {
@@ -133,7 +145,7 @@ public class TaskActivity extends AppCompatActivity{
 
     }
 
-    void getDateAndTime(View view){
+    void getDateAndTime(View view) {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("India/Kolkata"));
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);
@@ -152,7 +164,7 @@ public class TaskActivity extends AppCompatActivity{
                 }
             };
 
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this, onDateSetListener, year, month, day);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this, onDateSetListener, year, month+1, day);
             datePickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
             datePickerDialog.show();
         }
@@ -173,23 +185,25 @@ public class TaskActivity extends AppCompatActivity{
     }
 
     private Long getSelectedTime(int year, int month, int day, int hour, int minute) {
-        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Asia/Calcutta"),Locale.US);
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Asia/Calcutta"), Locale.US);
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, month);
         c.set(Calendar.DAY_OF_MONTH, day);
         c.set(Calendar.HOUR_OF_DAY, hour);
         c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND,0);
+        c.set(Calendar.MILLISECOND,0);
         return c.getTimeInMillis();
     }
 
 
-     void saveButtonClicked(View view) {
+    void saveButtonClicked(View view) {
         long l = saveTask(view);
-        if(l>0){
+        if (l > 0) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
-        }else{
-            Log.i("Error In saving Task","TaskActivity");
+        } else {
+            Log.i("Error In saving Task", "TaskActivity");
             new AlertDialog.Builder(this)
                     .setTitle(R.string.error)
                     .setMessage("Error in inserting record")
