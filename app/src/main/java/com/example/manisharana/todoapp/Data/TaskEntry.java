@@ -12,9 +12,7 @@ public class TaskEntry implements BaseColumns{
     public static final String COLUMN_REMIND_ME = "remind_me_flag";
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_STATUS = "state";
-    public static final String COLUMN_TAG_ID = "task_tag_id";
     public static final String COLUMN_USER_ID = "user_id";
-//    public static final String COLUMN_ATTACHMENT_ID = "attachment_id";
 
     public static final String TASK_PATH = "task";
 
@@ -35,11 +33,8 @@ public class TaskEntry implements BaseColumns{
                 + COLUMN_STATUS + " TEXT, "
                 + COLUMN_REMIND_ME + " BOOLEAN NOT NULL ,"
                 +COLUMN_USER_ID + " INTEGER NOT NULL, "
-                +COLUMN_TAG_ID + " INTEGER NOT NULL, "
                 + " FOREIGN KEY (" + COLUMN_USER_ID + ") REFERENCES "
-                + UserEntry.TABLE_NAME + " (" + UserEntry._ID + "), "
-                + " FOREIGN KEY (" + COLUMN_TAG_ID + ") REFERENCES "
-                + TaskTagEntry.TABLE_NAME + " (" + TaskTagEntry._ID +"));";
+                + UserEntry.TABLE_NAME + " ( " + UserEntry._ID + " )); ";
     }
 
     public static Uri buildTaskUri(long insert) {

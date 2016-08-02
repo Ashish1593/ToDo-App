@@ -1,31 +1,20 @@
 package com.example.manisharana.todoapp.Fragments;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.example.manisharana.todoapp.Activities.TagListActivity;
 import com.example.manisharana.todoapp.Adapters.TaskListAdapter;
 import com.example.manisharana.todoapp.Data.TaskEntry;
-import com.example.manisharana.todoapp.Data.TaskTagEntry;
-import com.example.manisharana.todoapp.Data.UserEntry;
 import com.example.manisharana.todoapp.R;
 
 public class TaskListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
@@ -39,17 +28,13 @@ public class TaskListFragment extends Fragment implements LoaderManager.LoaderCa
             TaskEntry.COLUMN_DESC,
             TaskEntry.COLUMN_REMIND_ME,
             TaskEntry.COLUMN_STATUS,
-            TaskTagEntry.COLUMN_TITLE,
-            TaskTagEntry.COLUMN_COLOR,
-};
+            };
     public static final int COL_TASK_ID = 0;
     public static final int COL_TASK_TITLE = 1;
     public static final int COL_TASK_DATE = 2;
     public static final int COL_TASK_DESC = 3;
     public static final int COL_TASK_REMIND_ME = 4;
     public static final int COL_TASK_STATUS = 5;
-    public static final int COL_TAG_TITLE = 6;
-    public static final int COL_TAG_COLOR = 7;
     public static final int COL_USER_NAME = 8;
 
 

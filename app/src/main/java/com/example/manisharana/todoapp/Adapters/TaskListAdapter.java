@@ -87,9 +87,6 @@ public class TaskListAdapter extends CursorAdapter {
         String title = cursor.getString(TaskListFragment.COL_TASK_TITLE);
         viewHolder.titleView.setText(title);
 
-        String tagColor = cursor.getString(TaskListFragment.COL_TAG_COLOR);
-        viewHolder.tagView.setBackgroundColor(Color.parseColor(tagColor));
-
 
         if (cursor.getString(TaskListFragment.COL_TASK_STATUS).equals("done")) {
             viewHolder.taskStatusButton.setImageResource(R.drawable.ic_action_label);
@@ -105,7 +102,6 @@ public class TaskListAdapter extends CursorAdapter {
         //   public final ImageView userImage;
         public final TextView dateView;
         public final TextView titleView;
-        public final ImageView tagView;
         private final TextView dayName;
         public final ImageButton removeButton;
         private final TextView taskIdView;
@@ -115,7 +111,6 @@ public class TaskListAdapter extends CursorAdapter {
             dayName = (TextView) view.findViewById(R.id.textView_day);
             taskIdView = (TextView) view.findViewById(R.id.text_view_task_id);
             taskStatusButton = (ImageButton) view.findViewById(R.id.image_view_task_status);
-            tagView = (ImageView) view.findViewById(R.id.image_view_tag_color);
             titleView = (TextView) view.findViewById(R.id.text_view_task_title);
             dateView = (TextView) view.findViewById(R.id.text_view_task_time);
             //     userImage = (ImageView) view.findViewById(R.id.image_view_user_image);

@@ -18,9 +18,7 @@
         <activity android:name=".Activities.TaskActivity" android:label="Task" android:parentActivityName=".Activities.MainActivity">
 
         </activity>
-        <activity android:name=".Activities.TagListActivity" android:label="Labels" android:parentActivityName=".Activities.MainActivity">
 
-        </activity>
         <provider
             android:authorities="com.example.manisharana.todoapp"
             android:name=".Data.TaskProvider"

@@ -45,7 +45,6 @@ public class TaskActivity extends AppCompatActivity {
     private TextView mTimeView;
     private TextView mDescriptionView;
     private Switch mRemindMe;
-    private Spinner mLabelView;
     private TextView mTitleView;
     private TaskDbHelper db;
 
@@ -78,10 +77,8 @@ public class TaskActivity extends AppCompatActivity {
         mTimeView = (TextView) this.findViewById(R.id.editText_task_time);
         mDescriptionView = (TextView) this.findViewById(R.id.editText_task_desc);
         mRemindMe = (Switch) this.findViewById(R.id.switch_remind_me);
-        mLabelView = (Spinner) this.findViewById(R.id.spinner_add_tag);
         fabButton = (FloatingActionButton) findViewById(R.id.fab_new_task);
 
-        loadSpinnerData();
     }
 
     public long saveTask(View view) {
@@ -92,13 +89,12 @@ public class TaskActivity extends AppCompatActivity {
         String desc = mDescriptionView.getText().toString();
         selectedTimeInMillis = getSelectedTime(mYear, mMonth, mDay, mHour, mMinute);
         long userId = getUserID();
-        int tagId = getTagID();
         if (mRemindMe.isChecked()) {
             remindMe = true;
         } else
             remindMe = false;
 
-        String[] selectionArgs = {title, String.valueOf(selectedTimeInMillis), desc, active, String.valueOf(remindMe), String.valueOf(tagId), String.valueOf(userId)};
+        String[] selectionArgs = {title, String.valueOf(selectedTimeInMillis), desc, active, String.valueOf(remindMe), String.valueOf(userId)};
         Cursor cursor = this.getContentResolver().query(TaskEntry.CONTENT_URI, new String[]{TaskEntry._ID}, getDefaultSelectionQuery(), selectionArgs, null);
 
         if (cursor.moveToFirst()) {
@@ -111,7 +107,6 @@ public class TaskActivity extends AppCompatActivity {
             values.put(TaskEntry.COLUMN_DESC, desc);
             values.put(TaskEntry.COLUMN_STATUS, active);
             values.put(TaskEntry.COLUMN_USER_ID, userId);
-            values.put(TaskEntry.COLUMN_TAG_ID, tagId);
             values.put(TaskEntry.COLUMN_REMIND_ME, remindMe);
 
             Uri insertedUri = this.getContentResolver().insert(TaskEntry.CONTENT_URI, values);
@@ -129,12 +124,7 @@ public class TaskActivity extends AppCompatActivity {
                 + TaskEntry.COLUMN_DESC + " = ? and "
                 + TaskEntry.COLUMN_STATUS + " = ? and "
                 + TaskEntry.COLUMN_REMIND_ME + " = ? and "
-                + TaskEntry.COLUMN_TAG_ID + " = ? and "
                 + TaskEntry.COLUMN_USER_ID + " = ? ";
-    }
-
-    private int getTagID() {
-        return db.getTagId(mLabelView.getSelectedItem().toString());
     }
 
     private long getUserID() {
@@ -155,15 +145,6 @@ public class TaskActivity extends AppCompatActivity {
             insertedUserId = ContentUris.parseId(this.getContentResolver().insert(UserEntry.CONTENT_URI,contentValues));
         }
         return insertedUserId;
-    }
-
-    private void loadSpinnerData() {
-        List<String> labels = db.getAllTags();
-
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, labels);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mLabelView.setAdapter(dataAdapter);
-
     }
 
     void getDateAndTime(View view) {

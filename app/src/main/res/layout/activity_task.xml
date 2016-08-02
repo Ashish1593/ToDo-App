@@ -100,15 +100,6 @@ android:layout_height="match_parent">
                     android:id="@+id/switch_remind_me"
                     />
             </LinearLayout>
-            <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/tag_names"
-                android:prompt="@string/assign_task_to"
-                android:spinnerMode="dialog"
-                android:id="@+id/spinner_add_tag"
-                android:layout_marginTop="10dp" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"

@@ -22,8 +22,6 @@ public class TaskDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         List<String> queries = new LinkedList<>();
         queries.add(UserEntry.getCreateUserEntry());
-        queries.add(TaskTagEntry.getCreateTaskTagEntry());
-        queries.add(TaskTagEntry.getInsertIntialData());
         queries.add(TaskEntry.getCreateTaskEntry());
         for(String query: queries){
             sqLiteDatabase.execSQL(query);
@@ -32,44 +30,6 @@ public class TaskDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVer, int newVer) {
-    }
-
-    public List<String> getAllTags(){
-        List<String> labels = new ArrayList<String>();
-
-        String selectQuery = "SELECT  * FROM " + TaskTagEntry.TABLE_NAME;
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                labels.add(cursor.getString(1));
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        db.close();
-
-        return labels;
-    }
-
-    public int getTagId(String title) {
-        int tagId = 0;
-        String selectQuery = "SELECT  * FROM " + TaskTagEntry.TABLE_NAME+ " where "+TaskTagEntry.COLUMN_TITLE+" = ? limit 1";
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery,new String[]{title});
-
-        if (cursor.moveToFirst()) {
-                tagId = cursor.getInt(0);
-        }
-
-        cursor.close();
-        db.close();
-
-        return tagId;
-
     }
 
 }
