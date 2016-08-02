@@ -11,4 +11,5 @@
     <string name="error">Error</string>
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
+    <string name="assign_task_to">Assign Task To</string>
 </resources>

@@ -22,7 +22,6 @@ public class TaskDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         List<String> queries = new LinkedList<>();
         queries.add(UserEntry.getCreateUserEntry());
-        queries.add(UserEntry.getInsertIntialData());
         queries.add(TaskTagEntry.getCreateTaskTagEntry());
         queries.add(TaskTagEntry.getInsertIntialData());
         queries.add(TaskEntry.getCreateTaskEntry());
@@ -39,26 +38,6 @@ public class TaskDbHelper extends SQLiteOpenHelper {
         List<String> labels = new ArrayList<String>();
 
         String selectQuery = "SELECT  * FROM " + TaskTagEntry.TABLE_NAME;
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                labels.add(cursor.getString(1));
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        db.close();
-
-        return labels;
-    }
-
-    public List<String> getAllUsers(){
-        List<String> labels = new ArrayList<String>();
-
-        String selectQuery = "SELECT  * FROM " + UserEntry.TABLE_NAME;
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -93,21 +72,4 @@ public class TaskDbHelper extends SQLiteOpenHelper {
 
     }
 
-    public int getUserId(String name) {
-        int userId = 0;
-        String selectQuery = "SELECT  * FROM " + UserEntry.TABLE_NAME+ " where "+UserEntry.COLUMN_NAME+" = ? limit 1";
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery,new String[]{name});
-
-        if (cursor.moveToFirst()) {
-                userId = cursor.getInt(0);
-        }
-
-        cursor.close();
-        db.close();
-
-        return userId;
-
-    }
 }

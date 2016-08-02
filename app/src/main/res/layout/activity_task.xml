@@ -104,18 +104,33 @@ android:layout_height="match_parent">
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/tag_names"
+                android:prompt="@string/assign_task_to"
                 android:spinnerMode="dialog"
                 android:id="@+id/spinner_add_tag"
                 android:layout_marginTop="10dp" />
 
-            <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:spinnerMode="dialog"
-                android:entries="@array/user_names"
-                android:id="@+id/spinner_add_user"
-                android:layout_marginTop="10dp"
-                />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:padding="8dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/text_view_user_name"
+                android:layout_width="wrap_content"
+                android:textSize="18sp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:gravity="right"
+                android:id="@+id/text_view_user_phone_number"
+                android:layout_width="0dp"
+                android:textSize="18sp"
+                android:layout_weight=".7"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

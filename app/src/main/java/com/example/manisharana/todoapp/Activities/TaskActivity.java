@@ -9,14 +9,19 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -25,6 +30,7 @@ import android.widget.TimePicker;
 import com.example.manisharana.todoapp.Adapters.Utility;
 import com.example.manisharana.todoapp.Data.TaskDbHelper;
 import com.example.manisharana.todoapp.Data.TaskEntry;
+import com.example.manisharana.todoapp.Data.UserEntry;
 import com.example.manisharana.todoapp.R;
 
 import java.util.Calendar;
@@ -34,11 +40,11 @@ import java.util.TimeZone;
 
 public class TaskActivity extends AppCompatActivity {
 
+    private static final int PICK_CONTACT = 0;
     private TextView mDateView;
     private TextView mTimeView;
     private TextView mDescriptionView;
     private Switch mRemindMe;
-    private Spinner mUserView;
     private Spinner mLabelView;
     private TextView mTitleView;
     private TaskDbHelper db;
@@ -48,7 +54,13 @@ public class TaskActivity extends AppCompatActivity {
     private int mDay;
     private int mHour;
     private int mMinute;
+    private String userId;
+    private String userName;
+    private String photoUri;
+    private String phoneNumber;
+
     private Long selectedTimeInMillis;
+
     private FloatingActionButton fabButton;
 
     public TaskActivity() {
@@ -66,7 +78,6 @@ public class TaskActivity extends AppCompatActivity {
         mTimeView = (TextView) this.findViewById(R.id.editText_task_time);
         mDescriptionView = (TextView) this.findViewById(R.id.editText_task_desc);
         mRemindMe = (Switch) this.findViewById(R.id.switch_remind_me);
-        mUserView = (Spinner) this.findViewById(R.id.spinner_add_user);
         mLabelView = (Spinner) this.findViewById(R.id.spinner_add_tag);
         fabButton = (FloatingActionButton) findViewById(R.id.fab_new_task);
 
@@ -80,7 +91,7 @@ public class TaskActivity extends AppCompatActivity {
         String title = mTitleView.getText().toString();
         String desc = mDescriptionView.getText().toString();
         selectedTimeInMillis = getSelectedTime(mYear, mMonth, mDay, mHour, mMinute);
-        int userId = getUserID();
+        long userId = getUserID();
         int tagId = getTagID();
         if (mRemindMe.isChecked()) {
             remindMe = true;
@@ -126,22 +137,32 @@ public class TaskActivity extends AppCompatActivity {
         return db.getTagId(mLabelView.getSelectedItem().toString());
     }
 
-    private int getUserID() {
-        return db.getUserId(mUserView.getSelectedItem().toString());
+    private long getUserID() {
+        Long insertedUserId;
+
+        String selection = UserEntry.COLUMN_NAME + " = ? and "+ UserEntry.COLUMN_PHONE_NUMBER +" = ? ";
+        String[] selectionArgs = new String[]{userName,phoneNumber};
+        Cursor cursor = this.getContentResolver().query(UserEntry.CONTENT_URI, new String[]{UserEntry._ID}, selection, selectionArgs, null);
+
+        if (cursor.moveToFirst()) {
+            int userIdIndex = cursor.getColumnIndex(UserEntry._ID);
+            insertedUserId = cursor.getLong(userIdIndex);
+        } else {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(UserEntry.COLUMN_NAME, userName);
+            contentValues.put(UserEntry.COLUMN_PHONE_NUMBER, phoneNumber);
+            contentValues.put(UserEntry.COLUMN_PHOTO, photoUri);
+            insertedUserId = ContentUris.parseId(this.getContentResolver().insert(UserEntry.CONTENT_URI,contentValues));
+        }
+        return insertedUserId;
     }
 
     private void loadSpinnerData() {
         List<String> labels = db.getAllTags();
-        List<String> users = db.getAllUsers();
-
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, labels);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mLabelView.setAdapter(dataAdapter);
-
-        ArrayAdapter<String> userAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, users);
-        userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mUserView.setAdapter(userAdapter);
 
     }
 
@@ -217,4 +238,50 @@ public class TaskActivity extends AppCompatActivity {
 
         }
     }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.activity_add_task_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_select_contact :
+                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                startActivityForResult(intent, PICK_CONTACT);
+                return  true;
+        }
+        return false;
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_CONTACT && resultCode == RESULT_OK) {
+            Uri contactData = data.getData();
+            Cursor query = this.getContentResolver().query(contactData, null, null, null, null);
+            if (query.moveToFirst()) {
+                userId = query.getString(query.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+                userName = query.getString(query.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                photoUri = query.getString(query.getColumnIndex(ContactsContract.Contacts.PHOTO_URI));
+                String hasPhone = query.getString(query.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+
+                if (hasPhone.equals("1")) {
+                    Cursor phoneQuery = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.Contacts.DISPLAY_NAME + " = ? ", new String[]{userName}, null);
+                    if (phoneQuery.moveToFirst()) {
+                        phoneNumber = phoneQuery.getString(phoneQuery.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    }
+                    phoneQuery.close();
+                }
+            }
+            query.close();
+        }
+        TextView userNameView = (TextView) this.findViewById(R.id.text_view_user_name);
+        userNameView.setText(userName);
+        TextView phoneNumberView = (TextView) this.findViewById(R.id.text_view_user_phone_number);
+        phoneNumberView.setText(phoneNumber);
+    }
 }
+

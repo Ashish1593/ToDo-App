@@ -90,6 +90,7 @@ public class TaskListAdapter extends CursorAdapter {
         String tagColor = cursor.getString(TaskListFragment.COL_TAG_COLOR);
         viewHolder.tagView.setBackgroundColor(Color.parseColor(tagColor));
 
+
         if (cursor.getString(TaskListFragment.COL_TASK_STATUS).equals("done")) {
             viewHolder.taskStatusButton.setImageResource(R.drawable.ic_action_label);
             viewHolder.titleView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
@@ -168,5 +169,7 @@ public class TaskListAdapter extends CursorAdapter {
 
         protected abstract void onAnimationEnd(View view, Animation animation);
     }
+
+
 
 }

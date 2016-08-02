@@ -49,7 +49,7 @@ public class TaskProvider extends ContentProvider {
     static final int TAG = 200;
     static final int ALL_TAGS = 201;
 
-    static final int ALL_USERS = 300;
+    static final int USERS = 300;
 
 
     public static UriMatcher getUriMatcher() {
@@ -60,7 +60,7 @@ public class TaskProvider extends ContentProvider {
         matcher.addURI(authority, TaskEntry.TASK_PATH + "/*", ALL_TASKS);
         matcher.addURI(authority, TaskTagEntry.TASK_TAG_PATH + "/*", TAG);
         matcher.addURI(authority, TaskTagEntry.TASK_TAG_PATH+"/#", ALL_TAGS);
-        matcher.addURI(authority, UserEntry.USER_PATH+"/#", ALL_USERS);
+        matcher.addURI(authority, UserEntry.USER_PATH, USERS);
         matcher.addURI(authority, TaskEntry.TASK_PATH, TASK);
 
         return matcher;
@@ -92,6 +92,9 @@ public class TaskProvider extends ContentProvider {
                 break;
             case TASK_WITH_TAG_AND_USER:
                 query = sQueryTaskAndTagAndUserBuilder.query(taskDbHelper.getReadableDatabase(), columns, selection, selectArgs, null, null, sortOrder);
+                break;
+            case USERS:
+                query = readDb.query(UserEntry.TABLE_NAME,columns,selection,selectArgs,null,null,sortOrder);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -132,6 +135,14 @@ public class TaskProvider extends ContentProvider {
             case TASK_WITH_TAG_AND_USER:
                 returnUri = null;
                 break;
+            case USERS:
+                long insertedUserId = db.insert(UserEntry.TABLE_NAME, null, contentValues);
+                if (insertedUserId > 0)
+                    returnUri = UserEntry.buildUserUri(insertedUserId);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
 
