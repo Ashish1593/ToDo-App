@@ -31,16 +31,6 @@ public class TaskListAdapter extends CursorAdapter {
         final ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
 
-        viewHolder.removeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LinearLayout parent = (LinearLayout) view.getParent();
-                TextView textIdView = (TextView) parent.findViewById(R.id.text_view_task_id);
-                taskId = textIdView.getText().toString();
-                slideOutView(parent);
-                deleteTask(taskId);
-            }
-        });
 
         viewHolder.taskStatusButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,10 +56,6 @@ public class TaskListAdapter extends CursorAdapter {
         ContentValues contentValues = new ContentValues();
         contentValues.put(TaskEntry.COLUMN_STATUS, "done");
         return contentValues;
-    }
-
-    private void deleteTask(String taskId) {
-        mContext.getContentResolver().delete(TaskEntry.CONTENT_URI, TaskEntry.TABLE_NAME + "." + TaskEntry._ID + " = ? ", new String[]{taskId});
     }
 
     @Override
@@ -100,7 +86,6 @@ public class TaskListAdapter extends CursorAdapter {
         public final TextView dateView;
         public final TextView titleView;
         private final TextView dayName;
-        public final ImageButton removeButton;
         private final TextView taskIdView;
         private final ImageButton taskStatusButton;
 
@@ -111,28 +96,8 @@ public class TaskListAdapter extends CursorAdapter {
             titleView = (TextView) view.findViewById(R.id.text_view_task_title);
             dateView = (TextView) view.findViewById(R.id.text_view_task_time);
             //     userImage = (ImageView) view.findViewById(R.id.image_view_user_image);
-            removeButton = (ImageButton) view.findViewById(R.id.image_button_delete_task);
         }
     }
-
-    private void slideOutView(View view) {
-        Animation slideOut = AnimationUtils.loadAnimation(view.getContext(), R.anim.slide_out_right);
-        if (slideOut != null) {
-            slideOut.setAnimationListener(new ViewAnimationListener(view) {
-                @Override
-                protected void onAnimationStart(View view, Animation animation) {
-
-                }
-
-                @Override
-                protected void onAnimationEnd(View view, Animation animation) {
-                    view.setVisibility(View.GONE);
-                }
-            });
-            view.startAnimation(slideOut);
-        }
-    }
-
 
     private abstract class ViewAnimationListener implements Animation.AnimationListener {
 

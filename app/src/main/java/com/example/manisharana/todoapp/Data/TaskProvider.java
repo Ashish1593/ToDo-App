@@ -103,21 +103,7 @@ public class TaskProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String where, String[] selectArgs) {
-        final SQLiteDatabase db = taskDbHelper.getWritableDatabase();
-        if (null == where) where = "1";
-        int count;
-        switch (uriMatcher.match(uri)) {
-            case TASK:
-                count = db.delete(TaskEntry.TABLE_NAME, where, selectArgs);
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-
-        }
-        if (count != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
-        }
-        return count;
+        return 0;
     }
 
     @Override

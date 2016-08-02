@@ -166,7 +166,7 @@ public class TaskActivity extends AppCompatActivity {
                 }
             };
 
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this, onDateSetListener, year, month+1, day);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this, onDateSetListener, year, month, day);
             datePickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
             datePickerDialog.show();
         }

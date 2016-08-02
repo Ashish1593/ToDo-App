@@ -47,23 +47,10 @@
             android:fontFamily="sans-serif-condensed"
             android:id="@+id/text_view_task_time"/>
     </LinearLayout>
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:padding="8dp"
-        android:layout_gravity="center"
-        android:layout_weight="0.5"
-        android:id="@+id/image_view_tag_color"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/text_view_task_id"
             android:visibility="invisible"/>
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/ic_action_action_highlight_remove"
-        android:id="@+id/image_button_delete_task"/>
     </LinearLayout>
 </LinearLayout>
