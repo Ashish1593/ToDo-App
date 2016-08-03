@@ -166,7 +166,7 @@ public class TaskActivity extends AppCompatActivity {
                 }
             };
 
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this, onDateSetListener, year, month, day);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this,R.style.MyDialogTheme ,onDateSetListener, year, month, day);
             datePickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
             datePickerDialog.show();
         }
@@ -181,7 +181,7 @@ public class TaskActivity extends AppCompatActivity {
 
             };
 
-            TimePickerDialog timePickerDialog = new TimePickerDialog(this, timeSetListener, hour, minute, false);
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this,R.style.MyDialogTheme, timeSetListener, hour, minute, false);
             timePickerDialog.show();
         }
     }

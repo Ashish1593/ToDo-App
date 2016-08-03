@@ -16,7 +16,7 @@ public class Utility {
 
     public static String getFormattedDateAndTime(long dateInMillis) {
         Date date = new Date(dateInMillis);
-        SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("HH:mm a");
         shortenedDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Calcutta"));
         String day = shortenedDateFormat.format(date.getTime());
         return day;
@@ -30,6 +30,9 @@ public class Utility {
         long currentTimeMillis = System.currentTimeMillis();
         Calendar currentCal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Calcutta"));
         currentCal.setTimeInMillis(currentTimeMillis);
+        currentCal.set(Calendar.HOUR_OF_DAY,0);
+        currentCal.set(Calendar.MINUTE,0);
+        currentCal.set(Calendar.MILLISECOND,0);
         int currentDate = currentCal.get(Calendar.DATE);
 
 
