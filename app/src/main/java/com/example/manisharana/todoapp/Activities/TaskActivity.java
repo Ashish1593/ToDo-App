@@ -17,24 +17,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.example.manisharana.todoapp.Adapters.Utility;
 import com.example.manisharana.todoapp.Data.TaskDbHelper;
 import com.example.manisharana.todoapp.Data.TaskEntry;
 import com.example.manisharana.todoapp.Data.UserEntry;
 import com.example.manisharana.todoapp.R;
 
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -46,14 +40,12 @@ public class TaskActivity extends AppCompatActivity {
     private TextView mDescriptionView;
     private Switch mRemindMe;
     private TextView mTitleView;
-    private TaskDbHelper db;
 
     private int mYear;
     private int mMonth;
     private int mDay;
     private int mHour;
     private int mMinute;
-    private String userId;
     private String userName;
     private String photoUri;
     private String phoneNumber;
@@ -63,8 +55,8 @@ public class TaskActivity extends AppCompatActivity {
     private FloatingActionButton fabButton;
 
     public TaskActivity() {
-        db = new TaskDbHelper(this);
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,7 +194,7 @@ public class TaskActivity extends AppCompatActivity {
     void saveButtonClicked(View view) {
         long l = saveTask(view);
         if (l > 0) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, TaskListActivity.class);
             startActivity(intent);
         } else {
             Log.i("Error In saving Task", "TaskActivity");
@@ -244,7 +236,7 @@ public class TaskActivity extends AppCompatActivity {
             Uri contactData = data.getData();
             Cursor query = this.getContentResolver().query(contactData, null, null, null, null);
             if (query.moveToFirst()) {
-                userId = query.getString(query.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+                String userId = query.getString(query.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
                 userName = query.getString(query.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                 photoUri = query.getString(query.getColumnIndex(ContactsContract.Contacts.PHOTO_URI));
                 String hasPhone = query.getString(query.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));

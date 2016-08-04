@@ -1,48 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-android:layout_width="match_parent"
-android:layout_height="match_parent">
-
-<LinearLayout android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".Activities.MainActivity">
 
-    <LinearLayout
-        android:id="@+id/actionBar"
+    <ImageView
+        android:id="@+id/welcome_auth0_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_social_group_add"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/welcome_greeting"
+        android:layout_below="@id/welcome_auth0_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        />
+    <Button
+        android:id="@+id/try_it_button"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="5"
-        android:elevation="5dp"
-        android:background="@color/colorPrimary"
-        android:orientation="horizontal"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight=".5"
-        android:orientation="horizontal">
-
-        <fragment
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            class="com.example.manisharana.todoapp.Fragments.TaskListFragment"
-            android:id="@+id/fragment_task_list_view"/>
-    </LinearLayout>
-
-</LinearLayout>
-
-<android.support.design.widget.FloatingActionButton
-    android:id="@+id/fab_add_task"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="16dp"
-    android:clickable="true"
-    android:onClick="navigateToTaskActivity"
-    android:src="@drawable/ic_content_add"
-    app:layout_anchor="@id/actionBar"
-    app:layout_anchorGravity="bottom|right|end"/>
-
-</android.support.design.widget.CoordinatorLayout>
-
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="@color/colorAccent"
+        android:text="@string/try_it_button"
+        android:textColor="@android:color/white"
+        />
+</RelativeLayout>

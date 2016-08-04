@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.manisharana.todoapp">
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
+        android:name=".Activities.MyApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -15,15 +17,37 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.TaskActivity" android:label="Task" android:parentActivityName=".Activities.MainActivity">
-
+        <activity android:name=".Activities.TaskActivity" android:label="Task" android:parentActivityName=".Activities.TaskListActivity"/>
+        <activity
+            android:name="com.auth0.lock.LockActivity"
+            android:theme="@style/Lock.Theme"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="a0TninnEqXUn4UZDl5kt6enYjNGUpDH1a7" android:host="manisharana.au.auth0.com"/>
+            </intent-filter>
         </activity>
+        <activity
+            android:name="com.auth0.lock.passwordless.LockPasswordlessActivity"
+            android:theme="@style/Lock.Theme"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
 
+        <activity android:name="com.auth0.lock.passwordless.CountryCodeActivity"
+            android:theme="@style/Lock.Theme"/>
+        <meta-data android:name="com.auth0.lock.client-id" android:value="@string/auth0_client_id"/>
+        <meta-data android:name="com.auth0.lock.domain-url" android:value="@string/auth0_domain"/>
+        <activity android:name=".Activities.RequestActivity" />
+        <activity android:name=".Activities.TaskListActivity" />
         <provider
             android:authorities="com.example.manisharana.todoapp"
             android:name=".Data.TaskProvider"
             android:enabled="true"
-            android:exported="true"></provider>
+            android:exported="true"/>
 
     </application>
 

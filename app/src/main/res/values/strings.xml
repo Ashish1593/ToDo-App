@@ -12,4 +12,11 @@
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
     <string name="assign_task_to">Assign Task To</string>
+    <string name="auth0_client_id">TninnEqXUn4UZDl5kt6enYjNGUpDH1a7</string>
+    <string name="auth0_domain">manisharana.au.auth0.com</string>
+    <string name="welcome_greeting">Welcome to Passwordless Sample</string>
+    <string name="try_it_button">Let\'s try it!</string>
+    <string name="logout_button">Logout</string>
+    <string name="sample_api_base_url">http://192.168.42.46:5000</string>
+    <string name="save_details">Save</string>
 </resources>
