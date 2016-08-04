@@ -11,46 +11,64 @@ import java.util.TimeZone;
 
 public class Utility {
 
-    private static final int ONE_DAY =  24 * 60 * 60 * 1000;
-    private static final int ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
 
-    public static String getFormattedDateAndTime(long dateInMillis) {
+    private static final TimeZone timeZone;
+
+    static {
+        timeZone = TimeZone.getTimeZone("Asia/Calcutta");
+    }
+
+    public static String getFormattedTime(long dateInMillis) {
         Date date = new Date(dateInMillis);
         SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("HH:mm a");
-        shortenedDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Calcutta"));
+        shortenedDateFormat.setTimeZone(timeZone);
         String day = shortenedDateFormat.format(date.getTime());
         return day;
     }
 
     public static String getFriendlyDayString(Context context, long dateInMillis) {
-        Calendar taskCal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Calcutta"));
+        Calendar taskCal = Calendar.getInstance(timeZone);
         taskCal.setTimeInMillis(dateInMillis);
-        int taskDate = taskCal.get(Calendar.DATE);
 
         long currentTimeMillis = System.currentTimeMillis();
-        Calendar currentCal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Calcutta"));
-        currentCal.setTimeInMillis(currentTimeMillis);
-        currentCal.set(Calendar.HOUR_OF_DAY,0);
-        currentCal.set(Calendar.MINUTE,0);
-        currentCal.set(Calendar.MILLISECOND,0);
-        int currentDate = currentCal.get(Calendar.DATE);
 
-
-        if (taskDate == currentDate) {
-            return context.getString(R.string.today);
-
-        } else if (taskDate == currentDate + 1) {
-            return context.getString(R.string.tomorrow);
-
-        } else if (taskDate < currentDate + 7) {
-            SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
-            dayFormat.setTimeZone(TimeZone.getTimeZone("Asia/Calcutta"));
-            return dayFormat.format(dateInMillis);
-        } else {
+        //OverDue
+        if (taskCal.getTimeInMillis() < currentTimeMillis)
+            return "OverDue";
+        else if (taskCal.getTimeInMillis() < getTimeInMillis(currentTimeMillis,1)) {
+            return "Today";
+        }else if(taskCal.getTimeInMillis() < getTimeInMillis(currentTimeMillis,2)){
+            return "Tomorrow";
+        }else if(taskCal.getTimeInMillis() < getUpComingSundayTimeInMillis()){
+            SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE");
+            shortenedDateFormat.setTimeZone(timeZone);
+            return shortenedDateFormat.format(dateInMillis);
+        }else{
             SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
-            shortenedDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Calcutta"));
+            shortenedDateFormat.setTimeZone(timeZone);
             return shortenedDateFormat.format(dateInMillis);
         }
+     }
+
+    private static long getTimeInMillis(long currentTimeMillis, int addDate) {
+        Calendar cal = Calendar.getInstance(timeZone);
+        cal.setTimeInMillis(currentTimeMillis);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.DAY_OF_MONTH,addDate);
+
+        return cal.getTimeInMillis();
+    }
+
+    private static long getUpComingSundayTimeInMillis() {
+        Calendar currentCal = Calendar.getInstance(timeZone);
+        currentCal.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
+        currentCal.set(Calendar.HOUR_OF_DAY,0);
+        currentCal.set(Calendar.MINUTE,0);
+        currentCal.set(Calendar.SECOND,0);
+        currentCal.add(Calendar.DATE,7);
+        return currentCal.getTimeInMillis();
     }
 
 }

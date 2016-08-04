@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -65,7 +64,7 @@ public class TaskListAdapter extends CursorAdapter {
 
         long dateInMillis = cursor.getLong(TaskListFragment.COL_TASK_DATE);
         viewHolder.dayName.setText(Utility.getFriendlyDayString(context, dateInMillis));
-        viewHolder.dateView.setText(Utility.getFormattedDateAndTime(dateInMillis));
+        viewHolder.dateView.setText(Utility.getFormattedTime(dateInMillis));
 
         String title = cursor.getString(TaskListFragment.COL_TASK_TITLE);
         viewHolder.titleView.setText(title);
