@@ -31,16 +31,16 @@ public class Utility {
         taskCal.setTimeInMillis(dateInMillis);
 
         long currentTimeMillis = System.currentTimeMillis();
+        Calendar cal = Calendar.getInstance(timeZone);
 
-        //OverDue
         if (taskCal.getTimeInMillis() < currentTimeMillis)
             return "OverDue";
-        else if (taskCal.getTimeInMillis() < getTimeInMillis(currentTimeMillis,1)) {
+        else if (taskCal.getTimeInMillis() < getTimeInMillis(cal,1)) {
             return "Today";
-        }else if(taskCal.getTimeInMillis() < getTimeInMillis(currentTimeMillis,2)){
+        }else if(taskCal.getTimeInMillis() < getTimeInMillis(cal,2)){
             return "Tomorrow";
-        }else if(taskCal.getTimeInMillis() < getUpComingSundayTimeInMillis()){
-            SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE");
+        }else if(taskCal.getTimeInMillis() < getUpComingMondayTimeInMillis(cal)){
+            SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEEE");
             shortenedDateFormat.setTimeZone(timeZone);
             return shortenedDateFormat.format(dateInMillis);
         }else{
@@ -50,24 +50,23 @@ public class Utility {
         }
      }
 
-    private static long getTimeInMillis(long currentTimeMillis, int addDate) {
-        Calendar cal = Calendar.getInstance(timeZone);
-        cal.setTimeInMillis(currentTimeMillis);
+    private static long getTimeInMillis(Calendar cal, int addDate) {
+        int currentDate = cal.get(Calendar.DATE);
+        cal.set(Calendar.DATE,currentDate+addDate);
+
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        cal.set(Calendar.DAY_OF_MONTH,addDate);
 
         return cal.getTimeInMillis();
     }
 
-    private static long getUpComingSundayTimeInMillis() {
-        Calendar currentCal = Calendar.getInstance(timeZone);
+    private static long getUpComingMondayTimeInMillis(Calendar currentCal) {
         currentCal.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
         currentCal.set(Calendar.HOUR_OF_DAY,0);
         currentCal.set(Calendar.MINUTE,0);
         currentCal.set(Calendar.SECOND,0);
-        currentCal.add(Calendar.DATE,7);
+        currentCal.add(Calendar.DATE,8);
         return currentCal.getTimeInMillis();
     }
 
