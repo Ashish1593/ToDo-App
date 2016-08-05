@@ -53,27 +53,7 @@ public class TaskListFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // setHasOptionsMenu(true);
     }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()){
-//            case R.id.action_edit_tag_list:
-//                Intent intent = new Intent(getActivity(), TagListActivity.class);
-//                startActivity(intent);
-//                return true;
-//
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        super.onCreateOptionsMenu(menu, inflater);
-//        inflater.inflate(R.menu.activity_main_menu,menu);
-//    }
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

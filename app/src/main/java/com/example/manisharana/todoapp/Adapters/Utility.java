@@ -26,7 +26,7 @@ public class Utility {
         return day;
     }
 
-    public static String getFriendlyDayString(Context context, long dateInMillis) {
+    public static String getFriendlyDayString(long dateInMillis) {
         Calendar taskCal = Calendar.getInstance(timeZone);
         taskCal.setTimeInMillis(dateInMillis);
 
@@ -34,7 +34,7 @@ public class Utility {
         Calendar cal = Calendar.getInstance(timeZone);
 
         if (taskCal.getTimeInMillis() < currentTimeMillis)
-            return "OverDue";
+            return "Overdue";
         else if (taskCal.getTimeInMillis() < getTimeInMillis(cal,1)) {
             return "Today";
         }else if(taskCal.getTimeInMillis() < getTimeInMillis(cal,2)){
