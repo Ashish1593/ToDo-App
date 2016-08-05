@@ -27,17 +27,30 @@ import java.util.TreeMap;
 
 public class TaskListAdapter extends SectionCursorAdapter<Section,TaskListAdapter.SectionViewHolder,TaskListAdapter.ItemViewHolder>{
 
+    private SortedMap<Integer, Section> mSectionsMap;
+
     public TaskListAdapter(Context context, Cursor c, int flags) {
         super(context,c,flags,R.layout.section_view,R.layout.list_item_task);
     }
 
+    public void setData(Cursor cursor, TreeMap<Integer, Section> sectionsMap) {
+        mSectionsMap = sectionsMap;
+        swapCursor(cursor);
+    }
+
+
     @Override
     protected Section getSectionFromCursor(Cursor cursor) {
+
+
         long dateInMillis = cursor.getLong(TaskListFragment.COL_TASK_DATE);
         Section section = new Section();
         section.setDayString(Utility.getFriendlyDayString(dateInMillis));
         return section;
     }
+
+
+
 
 //    @Override
 //    public View newView(Context context, Cursor cursor, ViewGroup parent) {
@@ -155,8 +168,11 @@ public class TaskListAdapter extends SectionCursorAdapter<Section,TaskListAdapte
             }
             cursorPosition++;
         }
+        setData(cursor,sections);
         return sections;
     }
+
+
 
 
     public class SectionViewHolder extends ViewHolder {
