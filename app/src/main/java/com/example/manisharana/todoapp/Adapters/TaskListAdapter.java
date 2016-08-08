@@ -27,13 +27,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TaskListAdapter extends ArrayAdapter<Task>{
 
 
-    public TaskListAdapter(Context context, int layoutResourceId) {
-        super(context,layoutResourceId);
+    public TaskListAdapter(Context context, int layoutResourceId, ArrayList<Task> tasks) {
+        super(context,layoutResourceId,tasks);
     }
 
     @Override
@@ -143,7 +144,7 @@ public class TaskListAdapter extends ArrayAdapter<Task>{
                     .build();
             final Request request = new Request.Builder()
                     .url(url)
-                    .post(body)
+                    .put(body)
                     .build();
             client.newCall(request).enqueue(this);
 

@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,22 +31,33 @@ import java.util.ArrayList;
 
 public class TaskListFragment extends Fragment{
 
+    private static final String LOG_TAG = TaskListFragment.class.getSimpleName();
     private TaskListAdapter taskListAdapter;
-    private FetchTaskListForUser fetchTaskListForUser;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_task_list, container, false);
-        taskListAdapter = new TaskListAdapter(getActivity(), R.layout.list_item_task);
+        taskListAdapter = new TaskListAdapter(getActivity(), R.layout.list_item_task, new ArrayList<Task>());
 
         ListView listView = (ListView) rootView.findViewById(R.id.list_view_task_list);
         listView.setAdapter(taskListAdapter);
 
-        fetchTaskListForUser = new FetchTaskListForUser(getActivity());
-        String phoneNumber = Utility.getFromPreferences(getActivity(), "PhoneNumber");
-        fetchTaskListForUser.execute(phoneNumber);
+        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
+
+        swipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
+                        swipeRefreshLayout.setRefreshing(true);
+                        String phoneNumber = Utility.getFromPreferences(getActivity(), "PhoneNumber");
+                        FetchTaskListForUser fetchTaskListForUser = new FetchTaskListForUser(swipeRefreshLayout);
+                        fetchTaskListForUser.execute(phoneNumber);
+                    }
+                }
+        );
 
 
         return rootView;
@@ -58,11 +70,13 @@ public class TaskListFragment extends Fragment{
 
     public class FetchTaskListForUser extends AsyncTask<String, String, Void> implements Callback {
 
+        private final SwipeRefreshLayout swipeRefreshLayout;
         private OkHttpClient client;
         private ArrayList<Task> tasks;
 
-        public FetchTaskListForUser(Context context) {
+        public FetchTaskListForUser(SwipeRefreshLayout swipeRefreshLayout) {
             tasks = new ArrayList<>();
+            this.swipeRefreshLayout = swipeRefreshLayout;
 
         }
 
@@ -87,7 +101,9 @@ public class TaskListFragment extends Fragment{
         protected void onPostExecute(Void s) {
             super.onPostExecute(s);
             taskListAdapter.clear();
+            swipeRefreshLayout.setRefreshing(true);
             taskListAdapter.addAll(tasks);
+            swipeRefreshLayout.setRefreshing(false);
         }
 
         @Override

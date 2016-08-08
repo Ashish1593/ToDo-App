@@ -11,10 +11,12 @@ import android.widget.TextView;
 import com.example.manisharana.todoapp.Models.User;
 import com.example.manisharana.todoapp.R;
 
+import java.util.ArrayList;
+
 public class ContactListAdapter extends ArrayAdapter<User>{
 
-    public ContactListAdapter(Context context, int resource) {
-        super(context, resource);
+    public ContactListAdapter(Context context, int resource, ArrayList<User> users) {
+        super(context, resource,users);
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 
 public class ContactListFragment extends Fragment {
 
+    private static final String LOG_TAG = ContactListFragment.class.getSimpleName();
     private ContactListAdapter contactListAdapter;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,10 +47,21 @@ public class ContactListFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_contact_list, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.list_view_contact_list);
-        contactListAdapter = new ContactListAdapter(getActivity(),R.layout.list_item_contact);
+        contactListAdapter = new ContactListAdapter(getActivity(),R.layout.list_item_contact,new ArrayList<User>());
         listView.setAdapter(contactListAdapter);
-        GetAllUsersTask getAllUsersTask = new GetAllUsersTask(getActivity());
-        getAllUsersTask.execute();
+        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
+
+        swipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
+                        swipeRefreshLayout.setRefreshing(true);
+                        GetAllUsersTask getAllUsersTask = new GetAllUsersTask(getActivity(),swipeRefreshLayout);
+                        getAllUsersTask.execute();
+                    }
+                }
+        );
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -69,10 +82,12 @@ public class ContactListFragment extends Fragment {
     public class GetAllUsersTask extends AsyncTask<Void, Void, ArrayList<User>> {
 
         private final Context context;
+        private final SwipeRefreshLayout swipeRefreshLayout;
         private OkHttpClient client;
 
-        public GetAllUsersTask(Context context) {
+        public GetAllUsersTask(Context context, SwipeRefreshLayout swipeRefreshLayout) {
             this.context = context;
+            this.swipeRefreshLayout = swipeRefreshLayout;
         }
 
         @Override
@@ -117,13 +132,10 @@ public class ContactListFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<User> users) {
             super.onPostExecute(users);
-            try {
-                Thread.sleep(5000,0);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            contactListAdapter.clear();
+            swipeRefreshLayout.setRefreshing(true);
             contactListAdapter.addAll(users);
-
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 
