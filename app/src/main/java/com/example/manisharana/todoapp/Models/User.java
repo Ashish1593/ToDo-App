@@ -3,9 +3,14 @@ package com.example.manisharana.todoapp.Models;
 public class User {
 
     private String name;
-    private String image;
+    private String phoneNumber;
 
     public User() {
+    }
+
+    public User(String name, String phoneNumber) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
     }
 
     public String getName() {
@@ -16,11 +21,12 @@ public class User {
         this.name = name;
     }
 
-    public String getImage() {
-        return image;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
+
 }

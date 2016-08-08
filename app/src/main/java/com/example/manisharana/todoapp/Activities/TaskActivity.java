@@ -4,12 +4,11 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -23,11 +22,22 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.example.manisharana.todoapp.Data.TaskDbHelper;
-import com.example.manisharana.todoapp.Data.TaskEntry;
+import com.example.manisharana.todoapp.Adapters.Utility;
 import com.example.manisharana.todoapp.Data.UserEntry;
+import com.example.manisharana.todoapp.Models.Task;
 import com.example.manisharana.todoapp.R;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.HttpUrl;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -50,7 +60,7 @@ public class TaskActivity extends AppCompatActivity {
     private String photoUri;
     private String phoneNumber;
 
-    private Long selectedTimeInMillis;
+    private String selectedTimeInMillis;
 
     private FloatingActionButton fabButton;
 
@@ -70,53 +80,6 @@ public class TaskActivity extends AppCompatActivity {
         mDescriptionView = (TextView) this.findViewById(R.id.editText_task_desc);
         mRemindMe = (Switch) this.findViewById(R.id.switch_remind_me);
         fabButton = (FloatingActionButton) findViewById(R.id.fab_new_task);
-
-    }
-
-    public long saveTask(View view) {
-        boolean remindMe;
-        long taskId;
-        String active = "active";
-        String title = mTitleView.getText().toString();
-        String desc = mDescriptionView.getText().toString();
-        selectedTimeInMillis = getSelectedTime(mYear, mMonth, mDay, mHour, mMinute);
-        long userId = getUserID();
-        if (mRemindMe.isChecked()) {
-            remindMe = true;
-        } else
-            remindMe = false;
-
-        String[] selectionArgs = {title, String.valueOf(selectedTimeInMillis), desc, active, String.valueOf(remindMe), String.valueOf(userId)};
-        Cursor cursor = this.getContentResolver().query(TaskEntry.CONTENT_URI, new String[]{TaskEntry._ID}, getDefaultSelectionQuery(), selectionArgs, null);
-
-        if (cursor.moveToFirst()) {
-            int taskIdIndex = cursor.getColumnIndex(TaskEntry._ID);
-            taskId = cursor.getLong(taskIdIndex);
-        } else {
-            ContentValues values = new ContentValues();
-            values.put(TaskEntry.COLUMN_TITLE, title);
-            values.put(TaskEntry.COLUMN_DATE, selectedTimeInMillis);
-            values.put(TaskEntry.COLUMN_DESC, desc);
-            values.put(TaskEntry.COLUMN_STATUS, active);
-            values.put(TaskEntry.COLUMN_USER_ID, userId);
-            values.put(TaskEntry.COLUMN_REMIND_ME, remindMe);
-
-            Uri insertedUri = this.getContentResolver().insert(TaskEntry.CONTENT_URI, values);
-            taskId = ContentUris.parseId(insertedUri);
-        }
-
-        cursor.close();
-        return taskId;
-
-    }
-
-    private String getDefaultSelectionQuery() {
-        return TaskEntry.COLUMN_TITLE + " = ? and "
-                + TaskEntry.COLUMN_DATE + " = ? and "
-                + TaskEntry.COLUMN_DESC + " = ? and "
-                + TaskEntry.COLUMN_STATUS + " = ? and "
-                + TaskEntry.COLUMN_REMIND_ME + " = ? and "
-                + TaskEntry.COLUMN_USER_ID + " = ? ";
     }
 
     private long getUserID() {
@@ -133,7 +96,6 @@ public class TaskActivity extends AppCompatActivity {
             ContentValues contentValues = new ContentValues();
             contentValues.put(UserEntry.COLUMN_NAME, userName);
             contentValues.put(UserEntry.COLUMN_PHONE_NUMBER, phoneNumber);
-            contentValues.put(UserEntry.COLUMN_PHOTO, photoUri);
             insertedUserId = ContentUris.parseId(this.getContentResolver().insert(UserEntry.CONTENT_URI,contentValues));
         }
         return insertedUserId;
@@ -178,7 +140,7 @@ public class TaskActivity extends AppCompatActivity {
         }
     }
 
-    private Long getSelectedTime(int year, int month, int day, int hour, int minute) {
+    private String getSelectedTime(int year, int month, int day, int hour, int minute) {
         Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Asia/Calcutta"), Locale.US);
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, month);
@@ -187,29 +149,27 @@ public class TaskActivity extends AppCompatActivity {
         c.set(Calendar.MINUTE, minute);
         c.set(Calendar.SECOND,0);
         c.set(Calendar.MILLISECOND,0);
-        return c.getTimeInMillis();
+        return c.getTime().toString();
     }
 
 
     void saveButtonClicked(View view) {
-        long l = saveTask(view);
-        if (l > 0) {
-            Intent intent = new Intent(this, TaskListActivity.class);
-            startActivity(intent);
-        } else {
-            Log.i("Error In saving Task", "TaskActivity");
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.error)
-                    .setMessage("Error in inserting record")
-                    .setCancelable(false)
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    }).create().show();
+        boolean remindMe;
+        String active = "active";
+        String title = mTitleView.getText().toString();
+        String desc = mDescriptionView.getText().toString();
+        selectedTimeInMillis = getSelectedTime(mYear, mMonth, mDay, mHour, mMinute);
+        long userId = getUserID();
+//        if (mRemindMe.isChecked()) {
+//            remindMe = true;
+//        } else
+//            remindMe = false;
 
-        }
+        String phoneUserNumber = Utility.getFromPreferences(this, "PhoneNumber");
+        Task task = new Task(title, selectedTimeInMillis, true, Utility.getFromPreferences(this, "UserName"), phoneUserNumber, userName,phoneUserNumber );
+
+        SaveTask saveTask = new SaveTask(this);
+        saveTask.execute(task);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -221,7 +181,8 @@ public class TaskActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_select_contact :
-                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                //Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                Intent intent = new Intent(this,ContactActivity.class);
                 startActivityForResult(intent, PICK_CONTACT);
                 return  true;
         }
@@ -233,28 +194,100 @@ public class TaskActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_CONTACT && resultCode == RESULT_OK) {
-            Uri contactData = data.getData();
-            Cursor query = this.getContentResolver().query(contactData, null, null, null, null);
-            if (query.moveToFirst()) {
-                String userId = query.getString(query.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
-                userName = query.getString(query.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                photoUri = query.getString(query.getColumnIndex(ContactsContract.Contacts.PHOTO_URI));
-                String hasPhone = query.getString(query.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
-
-                if (hasPhone.equals("1")) {
-                    Cursor phoneQuery = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.Contacts.DISPLAY_NAME + " = ? ", new String[]{userName}, null);
-                    if (phoneQuery.moveToFirst()) {
-                        phoneNumber = phoneQuery.getString(phoneQuery.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    }
-                    phoneQuery.close();
-                }
-            }
-            query.close();
+//            Uri contactData = data.getData();
+//            Cursor query = this.getContentResolver().query(contactData, null, null, null, null);
+//            if (query.moveToFirst()) {
+//                String userId = query.getString(query.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+//                userName = query.getString(query.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+//                photoUri = query.getString(query.getColumnIndex(ContactsContract.Contacts.PHOTO_URI));
+//                String hasPhone = query.getString(query.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+//
+//                if (hasPhone.equals("1")) {
+//                    Cursor phoneQuery = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.Contacts.DISPLAY_NAME + " = ? ", new String[]{userName}, null);
+//                    if (phoneQuery.moveToFirst()) {
+//                        phoneNumber = phoneQuery.getString(phoneQuery.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+//                    }
+//                    phoneQuery.close();
+//                }
+//            }
+//            query.close();
+            userName = data.getStringExtra("UserName");
+            phoneNumber = data.getStringExtra("UserPhone");
         }
         TextView userNameView = (TextView) this.findViewById(R.id.text_view_user_name);
         userNameView.setText(userName);
         TextView phoneNumberView = (TextView) this.findViewById(R.id.text_view_user_phone_number);
         phoneNumberView.setText(phoneNumber);
+    }
+
+    public class SaveTask extends AsyncTask<Task,String,String> {
+
+        private final Context context;
+        private OkHttpClient client;
+        public final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+        public SaveTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected String doInBackground(Task... args) {
+
+            String json = getJsonString(args[0]);
+            RequestBody body = RequestBody.create(JSON, json);
+
+            client = new OkHttpClient();
+            final HttpUrl url = HttpUrl.parse(getString(R.string.sample_api_base_url)).newBuilder()
+                    .addPathSegment("api")
+                    .addPathSegment("tasks")
+                    .build();
+            final Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        Log.i("Errror","Cannot add tasks");
+                        new AlertDialog.Builder(context)
+                            .setTitle(R.string.error)
+                            .setMessage("Error in inserting record")
+                            .setCancelable(true)
+                            .create().show();
+                    }
+
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        Intent intent = getIntentData();
+                        startActivity(intent);
+                    }
+                });
+
+            return null;
+        }
+
+        private Intent getIntentData() {
+            return new Intent( context,TaskListActivity.class);
+        }
+
+
+        private String getJsonString(Task task) {
+            JSONObject jsonObject = new JSONObject();
+             try {
+                jsonObject.put("title",task.getTitle());
+                jsonObject.put("date",task.getDate());
+                jsonObject.put("assgnByName",task.getAssignByName());
+                jsonObject.put("assgnByPhon",task.getAssignByPhone());
+                jsonObject.put("assgnToName",task.getAssignToName());
+                jsonObject.put("assgnToPhon",task.getAssignToPhone());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return jsonObject.toString();
+        }
+
+
+
     }
 }
 

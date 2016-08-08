@@ -1,6 +1,7 @@
 package com.example.manisharana.todoapp.Adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.example.manisharana.todoapp.R;
 
@@ -13,6 +14,7 @@ public class Utility {
 
 
     private static final TimeZone timeZone;
+    private static final String MY_PREFS_NAME = "MyPrefsFile";
 
     static {
         timeZone = TimeZone.getTimeZone("Asia/Calcutta");
@@ -68,6 +70,17 @@ public class Utility {
         currentCal.set(Calendar.SECOND,0);
         currentCal.add(Calendar.DATE,8);
         return currentCal.getTimeInMillis();
+    }
+
+    public static void saveToPreferences(Context context, String key, String value){
+        SharedPreferences.Editor editor = context.getSharedPreferences(MY_PREFS_NAME, context.MODE_PRIVATE).edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+    public static String getFromPreferences(Context context, String key){
+        SharedPreferences prefs = context.getSharedPreferences(MY_PREFS_NAME, context.MODE_PRIVATE);
+        return prefs.getString(key, null);
     }
 
 }

@@ -1,51 +1,50 @@
 package com.example.manisharana.todoapp.Fragments;
 
-import android.database.Cursor;
-import android.net.Uri;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.manisharana.todoapp.Adapters.TaskListAdapter;
-import com.example.manisharana.todoapp.Data.TaskEntry;
+import com.example.manisharana.todoapp.Adapters.Utility;
+import com.example.manisharana.todoapp.Models.Task;
 import com.example.manisharana.todoapp.R;
+import com.squareup.okhttp.HttpUrl;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
-public class TaskListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    private static final int TASK_LIST_LOADER = 0;
+import java.io.IOException;
+import java.util.ArrayList;
+
+public class TaskListFragment extends Fragment{
+
     private TaskListAdapter taskListAdapter;
-    private static final String[] TASK_LIST_COLUMNS = {
-            TaskEntry.TABLE_NAME + "." + TaskEntry._ID,
-            TaskEntry.COLUMN_TITLE,
-            TaskEntry.COLUMN_DATE,
-            TaskEntry.COLUMN_DESC,
-            TaskEntry.COLUMN_REMIND_ME,
-            TaskEntry.COLUMN_STATUS,
-            };
-    public static final int COL_TASK_ID = 0;
-    public static final int COL_TASK_TITLE = 1;
-    public static final int COL_TASK_DATE = 2;
-    public static final int COL_TASK_DESC = 3;
-    public static final int COL_TASK_REMIND_ME = 4;
-    public static final int COL_TASK_STATUS = 5;
-    public static final int COL_USER_NAME = 8;
+    private FetchTaskListForUser fetchTaskListForUser;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.fragment_task_list, container, false);
+        taskListAdapter = new TaskListAdapter(getActivity(), R.layout.list_item_task);
+
         ListView listView = (ListView) rootView.findViewById(R.id.list_view_task_list);
-        taskListAdapter = new TaskListAdapter(getActivity(), null, 0);
         listView.setAdapter(taskListAdapter);
+
+        fetchTaskListForUser = new FetchTaskListForUser(getActivity());
+        String phoneNumber = Utility.getFromPreferences(getActivity(), "PhoneNumber");
+        fetchTaskListForUser.execute(phoneNumber);
+
 
         return rootView;
     }
@@ -55,27 +54,60 @@ public class TaskListFragment extends Fragment implements LoaderManager.LoaderCa
         super.onCreate(savedInstanceState);
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String sortOrder = TaskEntry.COLUMN_DATE + " ASC";
-        Uri contentUri = TaskEntry.CONTENT_URI.buildUpon().appendPath("all").build();
-        return new CursorLoader(getActivity(), contentUri, TASK_LIST_COLUMNS, null, null, sortOrder);
+    public class FetchTaskListForUser extends AsyncTask<String, String, ArrayList<Task>> {
+
+        private OkHttpClient client;
+
+        public FetchTaskListForUser(Context context) {
+
+        }
+
+        @Override
+        protected ArrayList<Task> doInBackground(String... args) {
+            ArrayList<Task> tasks = new ArrayList<>();
+            client = new OkHttpClient();
+            final HttpUrl url = HttpUrl.parse(getString(R.string.sample_api_base_url)).newBuilder()
+                    .addPathSegment("api")
+                    .addPathSegment("tasks")
+                    .addEncodedPathSegment(args[0])
+                    .build();
+            final Request request = new Request.Builder()
+                    .url(url)
+                    .get()
+                    .build();
+            try {
+                Response response = client.newCall(request).execute();
+                JSONArray jsonArray = new JSONArray(response.body().string());
+                for(int i=0;i<jsonArray.length();i++){
+                    JSONObject object = jsonArray.getJSONObject(i);
+                    String taskId = object.getString("id");
+                    JSONObject taskData = object.getJSONObject("data");
+                    String title = taskData.getString("title");
+                    String date = taskData.getString("date");
+                    boolean status = taskData.getBoolean("status");
+                  //  String assgnByName = taskData.getString("assgnByName");
+                    String assgnByPhon = taskData.getString("assgnByPhon");
+                    String assgnToName = taskData.getString("assgnToName");
+                    String assgnToPhon = taskData.getString("assgnToPhon");
+                    Task task = new Task(title,taskId,date,status,"",assgnByPhon,assgnToName,assgnToPhon);
+                    tasks.add(task);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return tasks;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Task> s) {
+            super.onPostExecute(s);
+            taskListAdapter.clear();
+            taskListAdapter.addAll(s);
+        }
     }
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        taskListAdapter.swapCursor(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        taskListAdapter.swapCursor(null);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        getLoaderManager().initLoader(TASK_LIST_LOADER, null, this);
-        super.onActivityCreated(savedInstanceState);
-
-    }
 }

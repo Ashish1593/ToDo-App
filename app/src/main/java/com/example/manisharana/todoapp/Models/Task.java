@@ -2,15 +2,34 @@ package com.example.manisharana.todoapp.Models;
 
 public class Task {
     private String title;
-    private String description;
-    private boolean remindMeFlag;
-    private long date;
-    private String attachment;
-    private String state;
-    private TaskTag tag;
-    private User user;
+    private String id;
+    private String date;
+    private boolean status;
+    private String assignByName;
+    private String assignByPhone;
+    private String assignToName;
+    private String assignToPhone;
 
-    public Task() {
+
+    public Task(String title, String id, String date, boolean status, String assignByName, String assignByPhone, String assignToName, String assignToPhone) {
+        this.title = title;
+        this.id = id;
+        this.date = date;
+        this.status = status;
+        this.assignByName = assignByName;
+        this.assignByPhone = assignByPhone;
+        this.assignToName = assignToName;
+        this.assignToPhone = assignToPhone;
+    }
+
+    public Task(String title, String date, boolean status, String assignByName, String assignByPhone, String assignToName, String assignToPhone) {
+        this.title = title;
+        this.date = date;
+        this.status = status;
+        this.assignByName = assignByName;
+        this.assignByPhone = assignByPhone;
+        this.assignToName = assignToName;
+        this.assignToPhone = assignToPhone;
     }
 
     public String getTitle() {
@@ -21,59 +40,64 @@ public class Task {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
+    public String getId() {
+        return id;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public boolean isRemindMeFlag() {
-        return remindMeFlag;
-    }
-
-    public void setRemindMeFlag(boolean remindMeFlag) {
-        this.remindMeFlag = remindMeFlag;
-    }
-
-    public long getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(long date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public String getAttachment() {
-        return attachment;
+    public boolean isStatus() {
+        return status;
     }
 
-    public void setAttachment(String attachment) {
-        this.attachment = attachment;
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
-    public String getState() {
-        return state;
+    public String getAssignByName() {
+        return assignByName;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setAssignByName(String assignByName) {
+        this.assignByName = assignByName;
     }
 
-    public TaskTag getTag() {
-        return tag;
+    public String getAssignByPhone() {
+        return assignByPhone;
     }
 
-    public void setTag(TaskTag tag) {
-        this.tag = tag;
+    public void setAssignByPhone(String assignByPhone) {
+        this.assignByPhone = assignByPhone;
     }
 
-    public User getUser() {
-        return user;
+    public String getAssignToName() {
+        return assignToName;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAssignToName(String assignToName) {
+        this.assignToName = assignToName;
+    }
+
+    public String getAssignToPhone() {
+        return assignToPhone;
+    }
+
+    public void setAssignToPhone(String assignToPhone) {
+        this.assignToPhone = assignToPhone;
+    }
+
+    @Override
+    public String toString() {
+        return "Task name: "+getTitle();
     }
 }

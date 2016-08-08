@@ -2,52 +2,41 @@ package com.example.manisharana.todoapp.Adapters;
 
 
 import android.content.Context;
-import android.database.Cursor;
-import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.example.manisharana.todoapp.Fragments.ContactListFragment;
+import com.example.manisharana.todoapp.Models.User;
 import com.example.manisharana.todoapp.R;
 
-public class ContactListAdapter extends CursorAdapter {
+public class ContactListAdapter extends ArrayAdapter<User>{
 
-    public ContactListAdapter(Context context, Cursor c, int flags) {
-        super(context, c, flags);
+    public ContactListAdapter(Context context, int resource) {
+        super(context, resource);
     }
 
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        View view = LayoutInflater.from(context).inflate(R.layout.list_item_contact, parent, false);
-        view.setTag(new ContactViewHolder(view));
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View view = convertView;
+        if(view == null){
+            LayoutInflater inf = LayoutInflater.from(getContext());
+            view = inf.inflate(R.layout.list_item_contact, parent, false);
+        }
+        User user = getItem(position);
+        if(user != null){
+            TextView userNameView = (TextView) view.findViewById(R.id.text_view_contact_name);
+            TextView phoneNumberView = (TextView) view.findViewById(R.id.text_view_contact_phone_number);
 
+            if(userNameView != null)
+                userNameView.setText(user.getName());
+
+            if(phoneNumberView != null)
+                phoneNumberView.setText(user.getPhoneNumber());
+
+        }
         return view;
     }
 
-    @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        ContactViewHolder itemViewHolder = (ContactViewHolder) view.getTag();
-
-        String contactName = cursor.getString(ContactListFragment.COL_CONTACT_NAME);
-        itemViewHolder.contactName.setText(contactName);
-
-        String phoneNumber = cursor.getString(ContactListFragment.COL_CONTACT_NAME);
-        itemViewHolder.phoneNumber.setText(phoneNumber);
-
-    }
-
-    public class ContactViewHolder {
-
-        public final TextView contactName;
-        public final TextView phoneNumber;
-
-        public ContactViewHolder(View view) {
-            contactName = (TextView) view.findViewById(R.id.text_view_contact_name);
-            phoneNumber = (TextView) view.findViewById(R.id.text_view_contact_phone_number);
-            //     userImage = (ImageView) view.findViewById(R.id.image_view_user_image);
-        }
-
-    }
 }
