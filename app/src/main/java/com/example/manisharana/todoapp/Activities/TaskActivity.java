@@ -47,8 +47,6 @@ public class TaskActivity extends AppCompatActivity {
     private static final int PICK_CONTACT = 0;
     private TextView mDateView;
     private TextView mTimeView;
-    private TextView mDescriptionView;
-    private Switch mRemindMe;
     private TextView mTitleView;
 
     private int mYear;
@@ -59,9 +57,7 @@ public class TaskActivity extends AppCompatActivity {
     private String userName;
     private String photoUri;
     private String phoneNumber;
-
     private String selectedTimeInMillis;
-
     private FloatingActionButton fabButton;
 
     public TaskActivity() {
@@ -77,28 +73,7 @@ public class TaskActivity extends AppCompatActivity {
         mTitleView = (TextView) this.findViewById(R.id.editText_task_title);
         mDateView = (TextView) this.findViewById(R.id.editText_task_date);
         mTimeView = (TextView) this.findViewById(R.id.editText_task_time);
-        mDescriptionView = (TextView) this.findViewById(R.id.editText_task_desc);
-        mRemindMe = (Switch) this.findViewById(R.id.switch_remind_me);
         fabButton = (FloatingActionButton) findViewById(R.id.fab_new_task);
-    }
-
-    private long getUserID() {
-        Long insertedUserId;
-
-        String selection = UserEntry.COLUMN_NAME + " = ? and "+ UserEntry.COLUMN_PHONE_NUMBER +" = ? ";
-        String[] selectionArgs = new String[]{userName,phoneNumber};
-        Cursor cursor = this.getContentResolver().query(UserEntry.CONTENT_URI, new String[]{UserEntry._ID}, selection, selectionArgs, null);
-
-        if (cursor.moveToFirst()) {
-            int userIdIndex = cursor.getColumnIndex(UserEntry._ID);
-            insertedUserId = cursor.getLong(userIdIndex);
-        } else {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(UserEntry.COLUMN_NAME, userName);
-            contentValues.put(UserEntry.COLUMN_PHONE_NUMBER, phoneNumber);
-            insertedUserId = ContentUris.parseId(this.getContentResolver().insert(UserEntry.CONTENT_URI,contentValues));
-        }
-        return insertedUserId;
     }
 
     void getDateAndTime(View view) {
@@ -120,7 +95,7 @@ public class TaskActivity extends AppCompatActivity {
                 }
             };
 
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this,R.style.MyDialogTheme ,onDateSetListener, year, month, day);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this,R.style.MyDialogTheme ,onDateSetListener, year, month, day+1);
             datePickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
             datePickerDialog.show();
         }
@@ -142,31 +117,35 @@ public class TaskActivity extends AppCompatActivity {
 
     private String getSelectedTime(int year, int month, int day, int hour, int minute) {
         Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Asia/Calcutta"), Locale.US);
-        c.set(Calendar.YEAR, year);
-        c.set(Calendar.MONTH, month);
-        c.set(Calendar.DAY_OF_MONTH, day);
-        c.set(Calendar.HOUR_OF_DAY, hour);
-        c.set(Calendar.MINUTE, minute);
+        if(year != 0 && month != 0 && day != 0) {
+            c.set(Calendar.YEAR, year);
+            c.set(Calendar.MONTH, month);
+            c.set(Calendar.DAY_OF_MONTH, day);
+        }else{
+            c.set(Calendar.DAY_OF_MONTH, day+1);
+        }
+        if (hour != 0  && minute != 0) {
+            c.set(Calendar.HOUR_OF_DAY, hour);
+            c.set(Calendar.MINUTE, minute);
+        }
         c.set(Calendar.SECOND,0);
         c.set(Calendar.MILLISECOND,0);
-        return c.getTime().toString();
+        return String.valueOf(c.getTimeInMillis());
     }
 
 
     void saveButtonClicked(View view) {
-        boolean remindMe;
-        String active = "active";
         String title = mTitleView.getText().toString();
-        String desc = mDescriptionView.getText().toString();
         selectedTimeInMillis = getSelectedTime(mYear, mMonth, mDay, mHour, mMinute);
-        long userId = getUserID();
-//        if (mRemindMe.isChecked()) {
-//            remindMe = true;
-//        } else
-//            remindMe = false;
 
-        String phoneUserNumber = Utility.getFromPreferences(this, "PhoneNumber");
-        Task task = new Task(title, selectedTimeInMillis, true, Utility.getFromPreferences(this, "UserName"), phoneUserNumber, userName,phoneUserNumber );
+        String myPhoneNumber = Utility.getFromPreferences(this, "PhoneNumber");
+        String me = Utility.getFromPreferences(this, "UserName");
+        if(userName.equals("") && phoneNumber.equals("")){
+            userName = me;
+            phoneNumber = myPhoneNumber;
+        }
+
+        Task task = new Task(title, selectedTimeInMillis, true, me, myPhoneNumber, userName,phoneNumber );
 
         SaveTask saveTask = new SaveTask(this);
         saveTask.execute(task);
@@ -214,6 +193,7 @@ public class TaskActivity extends AppCompatActivity {
             userName = data.getStringExtra("UserName");
             phoneNumber = data.getStringExtra("UserPhone");
         }
+
         TextView userNameView = (TextView) this.findViewById(R.id.text_view_user_name);
         userNameView.setText(userName);
         TextView phoneNumberView = (TextView) this.findViewById(R.id.text_view_user_phone_number);

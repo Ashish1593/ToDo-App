@@ -117,7 +117,13 @@ public class ContactListFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<User> users) {
             super.onPostExecute(users);
+            try {
+                Thread.sleep(5000,0);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             contactListAdapter.addAll(users);
+
         }
     }
 

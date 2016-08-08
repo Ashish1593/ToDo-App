@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.example.manisharana.todoapp.Adapters.TaskListAdapter;
 import com.example.manisharana.todoapp.Adapters.Utility;
 import com.example.manisharana.todoapp.Models.Task;
 import com.example.manisharana.todoapp.R;
+import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -54,17 +56,18 @@ public class TaskListFragment extends Fragment{
         super.onCreate(savedInstanceState);
     }
 
-    public class FetchTaskListForUser extends AsyncTask<String, String, ArrayList<Task>> {
+    public class FetchTaskListForUser extends AsyncTask<String, String, Void> implements Callback {
 
         private OkHttpClient client;
+        private ArrayList<Task> tasks;
 
         public FetchTaskListForUser(Context context) {
+            tasks = new ArrayList<>();
 
         }
 
         @Override
-        protected ArrayList<Task> doInBackground(String... args) {
-            ArrayList<Task> tasks = new ArrayList<>();
+        protected Void doInBackground(String... args) {
             client = new OkHttpClient();
             final HttpUrl url = HttpUrl.parse(getString(R.string.sample_api_base_url)).newBuilder()
                     .addPathSegment("api")
@@ -75,8 +78,26 @@ public class TaskListFragment extends Fragment{
                     .url(url)
                     .get()
                     .build();
+            client.newCall(request).enqueue(this);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void s) {
+            super.onPostExecute(s);
+            taskListAdapter.clear();
+            taskListAdapter.addAll(tasks);
+        }
+
+        @Override
+        public void onFailure(Request request, IOException e) {
+            Log.i("Error","Error in getting tasklist");
+        }
+
+        @Override
+        public void onResponse(Response response) throws IOException {
             try {
-                Response response = client.newCall(request).execute();
                 JSONArray jsonArray = new JSONArray(response.body().string());
                 for(int i=0;i<jsonArray.length();i++){
                     JSONObject object = jsonArray.getJSONObject(i);
@@ -85,7 +106,6 @@ public class TaskListFragment extends Fragment{
                     String title = taskData.getString("title");
                     String date = taskData.getString("date");
                     boolean status = taskData.getBoolean("status");
-                  //  String assgnByName = taskData.getString("assgnByName");
                     String assgnByPhon = taskData.getString("assgnByPhon");
                     String assgnToName = taskData.getString("assgnToName");
                     String assgnToPhon = taskData.getString("assgnToPhon");
@@ -99,14 +119,6 @@ public class TaskListFragment extends Fragment{
                 e.printStackTrace();
             }
 
-            return tasks;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Task> s) {
-            super.onPostExecute(s);
-            taskListAdapter.clear();
-            taskListAdapter.addAll(s);
         }
     }
 
