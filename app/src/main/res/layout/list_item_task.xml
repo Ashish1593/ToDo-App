@@ -17,15 +17,13 @@
         </LinearLayout>
         <LinearLayout
         android:layout_width="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:fontFamily="sans-serif-condensed"
         android:id="@+id/text_view_task_title"/>
         <TextView

@@ -38,15 +38,15 @@ public class Utility {
         if (taskCal.getTimeInMillis() < currentTimeMillis)
             return "Overdue";
         else if (taskCal.getTimeInMillis() < getTimeInMillis(cal,1)) {
-            return "Today, "+getFormattedTime(taskCal.getTimeInMillis());
+            return "Today";
         }else if(taskCal.getTimeInMillis() < getTimeInMillis(cal,2)){
-            return "Tomorrow, "+getFormattedTime(taskCal.getTimeInMillis());
+            return "Tomorrow";
         }else if(taskCal.getTimeInMillis() < getUpComingMondayTimeInMillis(cal)){
-            SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEEE, HH:mm a");
+            SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEEE");
             shortenedDateFormat.setTimeZone(timeZone);
             return shortenedDateFormat.format(dateInMillis);
         }else{
-            SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd, HH:mm a");
+            SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
             shortenedDateFormat.setTimeZone(timeZone);
             return shortenedDateFormat.format(dateInMillis);
         }

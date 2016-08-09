@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,10 +43,18 @@ public class TaskListFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_task_list, container, false);
-        taskListAdapter = new TaskListAdapter(getActivity(), R.layout.list_item_task, new ArrayList<Task>());
 
-        ListView listView = (ListView) rootView.findViewById(R.id.list_view_task_list);
-        listView.setAdapter(taskListAdapter);
+        taskListAdapter = new TaskListAdapter(getActivity(),new ArrayList<Task>());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), OrientationHelper.VERTICAL, false);
+
+        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view_task_list);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(taskListAdapter);
+
+
+//        ListView listView = (ListView) rootView.findViewById(R.id.list_view_task_list);
+//        listView.setAdapter(taskListAdapter);
 
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
 
@@ -100,9 +112,8 @@ public class TaskListFragment extends Fragment{
         @Override
         protected void onPostExecute(Void s) {
             super.onPostExecute(s);
-            taskListAdapter.clear();
             swipeRefreshLayout.setRefreshing(true);
-            taskListAdapter.addAll(tasks);
+            taskListAdapter.swap(tasks);
             swipeRefreshLayout.setRefreshing(false);
         }
 
@@ -120,7 +131,7 @@ public class TaskListFragment extends Fragment{
                     String taskId = object.getString("id");
                     JSONObject taskData = object.getJSONObject("data");
                     String title = taskData.getString("title");
-                    String date = taskData.getString("date");
+                    long date = taskData.getLong("date");
                     boolean status = taskData.getBoolean("status");
                     String assgnByPhon = taskData.getString("assgnByPhon");
                     String assgnToName = taskData.getString("assgnToName");

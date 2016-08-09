@@ -57,7 +57,7 @@ public class TaskActivity extends AppCompatActivity {
     private String userName;
     private String photoUri;
     private String phoneNumber;
-    private String selectedTimeInMillis;
+    private long selectedTimeInMillis;
     private FloatingActionButton fabButton;
 
     public TaskActivity() {
@@ -115,7 +115,7 @@ public class TaskActivity extends AppCompatActivity {
         }
     }
 
-    private String getSelectedTime(int year, int month, int day, int hour, int minute) {
+    private long getSelectedTime(int year, int month, int day, int hour, int minute) {
         Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Asia/Calcutta"), Locale.US);
         if(year != 0 && month != 0 && day != 0) {
             c.set(Calendar.YEAR, year);
@@ -130,7 +130,7 @@ public class TaskActivity extends AppCompatActivity {
         }
         c.set(Calendar.SECOND,0);
         c.set(Calendar.MILLISECOND,0);
-        return String.valueOf(c.getTimeInMillis());
+        return c.getTimeInMillis();
     }
 
 

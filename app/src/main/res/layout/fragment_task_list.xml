@@ -4,12 +4,13 @@ android:id="@+id/swipe_refresh"
 android:layout_width="match_parent"
 android:layout_height="match_parent">
 
-    <ListView android:layout_width="match_parent"
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
         android:id="@+id/list_view_task_list"
         android:layout_height="match_parent"
         android:fastScrollEnabled="true"
-        android:divider="#00000000"
-        xmlns:android="http://schemas.android.com/apk/res/android">
-    </ListView>
+        android:divider="#00000000"/>
+
 
 </android.support.v4.widget.SwipeRefreshLayout>

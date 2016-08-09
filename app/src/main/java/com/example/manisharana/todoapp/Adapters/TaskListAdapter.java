@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Paint;
 import android.os.AsyncTask;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.example.manisharana.todoapp.Models.Task;
 import com.example.manisharana.todoapp.R;
 import com.squareup.okhttp.Callback;
@@ -30,65 +33,152 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaskListAdapter extends ArrayAdapter<Task>{
+public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int ITEM_VIEW_TYPE_REGULAR_WITH_SEPARATOR = 0;
+    private static final int ITEM_VIEW_TYPE_REGULAR = 1;
+    private final ArrayList<Task> tasks;
+    private final Context context;
 
 
-    public TaskListAdapter(Context context, int layoutResourceId, ArrayList<Task> tasks) {
-        super(context,layoutResourceId,tasks);
+    public TaskListAdapter(Context context, ArrayList<Task> tasks) {
+        this.tasks = tasks;
+        this.context = context;
+    }
+
+
+    private void updateTaskStatusToDone(Task task)
+    {
+        new UpdateTask(this).execute(task);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-            View v = convertView;
-
-            if (v == null) {
-                LayoutInflater vi;
-                vi = LayoutInflater.from(getContext());
-                v = vi.inflate(R.layout.list_item_task, parent,false);
-            }
-            final Task task = getItem(position);
-
-            if (task!= null) {
-                final ImageButton taskStatusButton = (ImageButton) v.findViewById(R.id.image_view_task_status);
-                final TextView titleView = (TextView) v.findViewById(R.id.text_view_task_title);
-                TextView dateView = (TextView) v.findViewById(R.id.text_view_task_time);
-
-                if(dateView != null){
-                    dateView.setText(Utility.getFriendlyDayString(Long.valueOf(task.getDate())));
-                }
-
-                if (titleView != null) {
-                    titleView.setText(task.getTitle());
-                }
-
-
-                if(task.isStatus()){
-                    taskStatusButton.setImageResource(R.drawable.ic_action_label_outline);
-                }else{
-                    taskStatusButton.setImageResource(R.drawable.ic_action_label);
-                    titleView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                }
-
-                taskStatusButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        taskStatusButton.setImageResource(R.drawable.ic_action_label);
-                        titleView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                        task.setStatus(false);
-                        updateTaskStatusToDone(task);
-                    }
-                });
-
-            }
-        return v;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view;
+        switch (viewType) {
+            case ITEM_VIEW_TYPE_REGULAR_WITH_SEPARATOR:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.section_view, parent, false);
+                return new SectionViewHolder(view);
+            case ITEM_VIEW_TYPE_REGULAR:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_task, parent, false);
+                return new TaskViewHolder(view);
+        }
+        return null;
     }
 
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        Task task = tasks.get(position);
+        if(task != null) {
+            if (position == 0) {
+                populateSectionWithTaskView((SectionViewHolder) holder, task);
+            } else if (!tasks.isEmpty() && position > 0) {
+                Task prevObject = tasks.get(position - 1);
+                Task currentObject = tasks.get(position);
+                String friendlyPrevDayDate = Utility.getFriendlyDayString(prevObject.getDate());
+                String friendlyCurDayDate = Utility.getFriendlyDayString(currentObject.getDate());
+                if (friendlyPrevDayDate.equals(friendlyCurDayDate)) {
+                    populateTaskView((TaskViewHolder)holder,task);
+                } else {
+                    populateSectionWithTaskView((SectionViewHolder)holder,task);
+                }
+            }
+        }
+
+    }
+
+    private void populateTaskView(TaskViewHolder holder, Task task) {
+        holder.titleView.setText(task.getTitle());
+        holder.dateView.setText(Utility.getFormattedTime(task.getDate()));
+        if (task.isStatus()) {
+            holder.taskStatusButton.setImageResource(R.drawable.ic_action_label_outline);
+        } else {
+            holder.taskStatusButton.setImageResource(R.drawable.ic_action_label);
+            holder.titleView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+    }
+
+    private void populateSectionWithTaskView(SectionViewHolder holder, Task task) {
+        holder.dayView.setText(Utility.getFriendlyDayString(task.getDate()));
+        holder.titleView.setText(task.getTitle());
+        holder.dateView.setText(Utility.getFormattedTime(task.getDate()));
+        if (task.isStatus()) {
+            holder.taskStatusButton.setImageResource(R.drawable.ic_action_label_outline);
+        } else {
+            holder.taskStatusButton.setImageResource(R.drawable.ic_action_label);
+            holder.titleView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+    }
+
+    public void swap(ArrayList<Task> datas){
+        tasks.clear();
+        tasks.addAll(datas);
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public int getItemCount() {
+        if (tasks.isEmpty())
+            return 0;
+        return tasks.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        super.getItemViewType(position);
+        int itemViewType = -1;
+
+        if (position == 0) {
+            itemViewType = ITEM_VIEW_TYPE_REGULAR_WITH_SEPARATOR;
+        } else if (!tasks.isEmpty() && position > 0) {
+            Task prevObject = tasks.get(position - 1);
+            Task currentObject = tasks.get(position);
+            String friendlyPrevDayDate = Utility.getFriendlyDayString(prevObject.getDate());
+            String friendlyCurDayDate = Utility.getFriendlyDayString(currentObject.getDate());
+            if (friendlyPrevDayDate.equals(friendlyCurDayDate)) {
+                itemViewType = ITEM_VIEW_TYPE_REGULAR;
+            } else {
+                itemViewType = ITEM_VIEW_TYPE_REGULAR_WITH_SEPARATOR;
+
+            }
+        }
+        return  itemViewType;
+    }
+
+    public class TaskViewHolder extends RecyclerView.ViewHolder {
 
 
+        private final ImageButton taskStatusButton;
+        private final TextView titleView;
+        private final TextView dateView;
 
-    private void updateTaskStatusToDone(Task task) {
-        new UpdateTask(this).execute(task);
+        public TaskViewHolder(View itemView) {
+            super(itemView);
+            taskStatusButton = (ImageButton) itemView.findViewById(R.id.image_view_task_status);
+            titleView = (TextView) itemView.findViewById(R.id.text_view_task_title);
+            dateView = (TextView) itemView.findViewById(R.id.text_view_task_time);
+        }
+
+
+    }
+
+    public class SectionViewHolder extends RecyclerView.ViewHolder {
+
+
+        private final TextView dayView;
+        private final ImageButton taskStatusButton;
+        private final TextView titleView;
+        private final TextView dateView;
+
+
+        public SectionViewHolder(View itemView) {
+            super(itemView);
+            dayView = (TextView) itemView.findViewById(R.id.text_view_section_day);
+            taskStatusButton = (ImageButton) itemView.findViewById(R.id.image_view_task_status);
+            titleView = (TextView) itemView.findViewById(R.id.text_view_task_title);
+            dateView = (TextView) itemView.findViewById(R.id.text_view_task_time);
+        }
+
     }
 
 
@@ -120,7 +210,7 @@ public class TaskListAdapter extends ArrayAdapter<Task>{
         protected abstract void onAnimationEnd(View view, Animation animation);
     }
 
-    public class UpdateTask extends AsyncTask<Task,Void,Void> implements Callback {
+    public class UpdateTask extends AsyncTask<Task, Void, Void> implements Callback {
         public final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         private final TaskListAdapter adapter;
         private OkHttpClient client;
@@ -128,7 +218,6 @@ public class TaskListAdapter extends ArrayAdapter<Task>{
 
         public UpdateTask(TaskListAdapter taskListAdapter) {
             this.adapter = taskListAdapter;
-
         }
 
 
@@ -138,7 +227,7 @@ public class TaskListAdapter extends ArrayAdapter<Task>{
             RequestBody body = RequestBody.create(JSON, json);
 
             client = new OkHttpClient();
-            final HttpUrl url = HttpUrl.parse(getContext().getString(R.string.sample_api_base_url)).newBuilder()
+            final HttpUrl url = HttpUrl.parse(context.getString(R.string.sample_api_base_url)).newBuilder()
                     .addPathSegment("api")
                     .addPathSegment("tasks")
                     .build();
@@ -156,16 +245,16 @@ public class TaskListAdapter extends ArrayAdapter<Task>{
             JSONObject jsonTask = new JSONObject();
             try {
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("title",task.getTitle());
-                jsonObject.put("date",task.getDate());
-                jsonObject.put("status",task.isStatus());
-                jsonObject.put("assgnByName",task.getAssignByName());
-                jsonObject.put("assgnByPhon",task.getAssignByPhone());
-                jsonObject.put("assgnToName",task.getAssignToName());
-                jsonObject.put("assgnToPhon",task.getAssignToPhone());
-                jsonObject.put("comments","");
-                jsonTask.put("id",task.getId());
-                jsonTask.put("data",jsonObject);
+                jsonObject.put("title", task.getTitle());
+                jsonObject.put("date", task.getDate());
+                jsonObject.put("status", task.isStatus());
+                jsonObject.put("assgnByName", task.getAssignByName());
+                jsonObject.put("assgnByPhon", task.getAssignByPhone());
+                jsonObject.put("assgnToName", task.getAssignToName());
+                jsonObject.put("assgnToPhon", task.getAssignToPhone());
+                jsonObject.put("comments", "");
+                jsonTask.put("id", task.getId());
+                jsonTask.put("data", jsonObject);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -175,14 +264,14 @@ public class TaskListAdapter extends ArrayAdapter<Task>{
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if(success){
+            if (success) {
                 adapter.notifyDataSetChanged();
             }
         }
 
         @Override
         public void onFailure(Request request, IOException e) {
-            Log.i("Error","Error in updating task");
+            Log.i("Error", "Error in updating task");
         }
 
         @Override
@@ -190,7 +279,6 @@ public class TaskListAdapter extends ArrayAdapter<Task>{
             success = true;
         }
     }
-
 
 
 }

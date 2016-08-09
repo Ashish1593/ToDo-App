@@ -3,7 +3,7 @@ package com.example.manisharana.todoapp.Models;
 public class Task {
     private String title;
     private String id;
-    private String date;
+    private long date;
     private boolean status;
     private String assignByName;
     private String assignByPhone;
@@ -11,7 +11,7 @@ public class Task {
     private String assignToPhone;
 
 
-    public Task(String title, String id, String date, boolean status, String assignByName, String assignByPhone, String assignToName, String assignToPhone) {
+    public Task(String title, String id, long date, boolean status, String assignByName, String assignByPhone, String assignToName, String assignToPhone) {
         this.title = title;
         this.id = id;
         this.date = date;
@@ -22,7 +22,7 @@ public class Task {
         this.assignToPhone = assignToPhone;
     }
 
-    public Task(String title, String date, boolean status, String assignByName, String assignByPhone, String assignToName, String assignToPhone) {
+    public Task(String title, long date, boolean status, String assignByName, String assignByPhone, String assignToName, String assignToPhone) {
         this.title = title;
         this.date = date;
         this.status = status;
@@ -48,11 +48,11 @@ public class Task {
         this.id = id;
     }
 
-    public String getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
