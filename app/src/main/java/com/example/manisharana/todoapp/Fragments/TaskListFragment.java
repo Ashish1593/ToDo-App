@@ -1,6 +1,6 @@
 package com.example.manisharana.todoapp.Fragments;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,8 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
+import com.example.manisharana.todoapp.Activities.TaskActivity;
 import com.example.manisharana.todoapp.Adapters.TaskListAdapter;
 import com.example.manisharana.todoapp.Adapters.Utility;
 import com.example.manisharana.todoapp.Models.Task;
@@ -33,7 +33,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class TaskListFragment extends Fragment{
+public class TaskListFragment extends Fragment implements View.OnClickListener {
 
     private static final String LOG_TAG = TaskListFragment.class.getSimpleName();
     private TaskListAdapter taskListAdapter;
@@ -45,16 +45,18 @@ public class TaskListFragment extends Fragment{
         View rootView = inflater.inflate(R.layout.fragment_task_list, container, false);
 
         taskListAdapter = new TaskListAdapter(getActivity(),new ArrayList<Task>());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), OrientationHelper.VERTICAL, false);
 
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view_task_list);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), OrientationHelper.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(taskListAdapter);
 
+        mRecyclerView.setOnClickListener(this);
 
-//        ListView listView = (ListView) rootView.findViewById(R.id.list_view_task_list);
-//        listView.setAdapter(taskListAdapter);
+
+//       ListView listView = (ListView) rootView.findViewById(R.id.list_view_task_list);
+//       listView.setAdapter(taskListAdapter);
 
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
 
@@ -78,6 +80,12 @@ public class TaskListFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onClick(View view) {
+        Intent intent = new Intent(getActivity(), TaskActivity.class);
+        startActivity(intent);
     }
 
     public class FetchTaskListForUser extends AsyncTask<String, String, Void> implements Callback {

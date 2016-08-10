@@ -2,13 +2,12 @@ package com.example.manisharana.todoapp.Adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
-import com.example.manisharana.todoapp.R;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+
+import static java.util.Calendar.getInstance;
 
 public class Utility {
 
@@ -17,7 +16,7 @@ public class Utility {
     private static final String MY_PREFS_NAME = "MyPrefsFile";
 
     static {
-        timeZone = TimeZone.getTimeZone("Asia/Calcutta");
+        timeZone = TimeZone.getDefault();
     }
 
     public static String getFormattedTime(long dateInMillis) {
@@ -29,11 +28,11 @@ public class Utility {
     }
 
     public static String getFriendlyDayString(long dateInMillis) {
-        Calendar taskCal = Calendar.getInstance(timeZone);
+        Calendar taskCal = getCalendarInstance();
         taskCal.setTimeInMillis(dateInMillis);
 
         long currentTimeMillis = System.currentTimeMillis();
-        Calendar cal = Calendar.getInstance(timeZone);
+        Calendar cal = getCalendarInstance();
 
         if (taskCal.getTimeInMillis() < currentTimeMillis)
             return "Overdue";
@@ -55,7 +54,6 @@ public class Utility {
     private static long getTimeInMillis(Calendar cal, int addDate) {
         int currentDate = cal.get(Calendar.DATE);
         cal.set(Calendar.DATE,currentDate+addDate);
-
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.MILLISECOND, 0);
@@ -81,6 +79,10 @@ public class Utility {
     public static String getFromPreferences(Context context, String key){
         SharedPreferences prefs = context.getSharedPreferences(MY_PREFS_NAME, context.MODE_PRIVATE);
         return prefs.getString(key, null);
+    }
+
+    public static Calendar getCalendarInstance(){
+        return getInstance(timeZone);
     }
 
 }

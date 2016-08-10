@@ -1,6 +1,8 @@
 package com.example.manisharana.todoapp.Models;
 
-public class Task {
+import java.io.Serializable;
+
+public class Task implements Serializable{
     private String title;
     private String id;
     private long date;
@@ -30,6 +32,10 @@ public class Task {
         this.assignByPhone = assignByPhone;
         this.assignToName = assignToName;
         this.assignToPhone = assignToPhone;
+    }
+
+    public Task() {
+
     }
 
     public String getTitle() {
