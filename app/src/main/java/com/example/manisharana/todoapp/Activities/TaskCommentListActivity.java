@@ -24,6 +24,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+
 public class TaskCommentListActivity extends AppCompatActivity {
 
     private static final String TAG = TaskCommentListActivity.class.getSimpleName();
@@ -58,48 +62,80 @@ public class TaskCommentListActivity extends AppCompatActivity {
 
     }
 
-    private void connectWebSocket(){
-        URI uri = null;
+    private void connectWebSocket() {
         try {
-            uri = new URI("");
+            final Socket socket = IO.socket("http://192.168.42.174:3000/");
+            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+                    Log.i("LOgggggggg","On call connected");
+                    socket.emit("joinroom", "stackoverflow");
+                }
+
+            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+                    Log.i("LOgggggggg","On call connected");
+                }
+
+            });
+            socket.connect();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
-        mWebSocketClient = new WebSocketClient(uri) {
 
-            @Override
-            public void onOpen(ServerHandshake handshakedata) {
-                Log.i(TAG,"WebSocket Open");
-            }
-
-            @Override
-            public void onMessage(String message) {
-                Log.d(TAG, String.format("Got string message! %s", message));
-
-                parseMessage(message);
-            }
-
-            @Override
-            public void onClose(int code, String reason, boolean remote) {
-                String message = String.format("Disconnected! Code: %d Reason: %s", code, reason);
-                showToast(message);
-
-                mUtility.storeSessionId(null);
-            }
-
-            @Override
-            public void onError(Exception error) {
-                Log.e(TAG, "Error! : " + error);
-
-                showToast("Error! : " + error);
-            }
-        };
-        mWebSocketClient.connect();
+//        URI uri = null;
+//        try {
+//            uri = new URI("ws://192.168.42.174:3000/");
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
+//
+//        mWebSocketClient = new WebSocketClient(uri) {
+//
+//            @Override
+//            public void onOpen(ServerHandshake handshakedata) {
+//                Log.i(TAG,"WebSocket Open");
+//            }
+//
+//            @Override
+//            public void onMessage(String message) {
+//                Log.d(TAG, String.format("Got string message! %s", message));
+//
+//                parseMessage(message);
+//            }
+//
+//            @Override
+//            public void onClose(int code, String reason, boolean remote) {
+//                String message = String.format("Disconnected! Code: %d Reason: %s", code, reason);
+//                showToast(message);
+//
+//                mUtility.storeSessionId(null);
+//            }
+//
+//            @Override
+//            public void onError(Exception error) {
+//                Log.e(TAG, "Error! : " + error);
+//
+//                showToast("Error! : " + error);
+//            }
+//        };
+//        mWebSocketClient.connect();
+//    }
     }
 
-    private void showToast(String message) {
-        Toast.makeText(this, message,Toast.LENGTH_SHORT).show();
+    private void showToast(final String message) {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                Toast.makeText(getApplicationContext(), message,Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void parseMessage(String message) {

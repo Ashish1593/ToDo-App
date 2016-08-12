@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.manisharana.todoapp.Activities.TaskActivity;
+import com.example.manisharana.todoapp.Activities.TaskCommentListActivity;
 import com.example.manisharana.todoapp.AsyncTasks.UpdateTask;
 import com.example.manisharana.todoapp.Models.Task;
 import com.example.manisharana.todoapp.R;
@@ -118,7 +119,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private Intent getIntentWithData(Task task) {
-        Intent intent = new Intent(context, TaskActivity.class);
+        Intent intent = new Intent(context, TaskCommentListActivity.class);
         intent.putExtra("Task", task);
         return intent;
     }
