@@ -3,10 +3,14 @@ package com.example.manisharana.todoapp.Fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +21,7 @@ import android.widget.ListView;
 
 import com.example.manisharana.todoapp.Adapters.ContactListAdapter;
 import com.example.manisharana.todoapp.Adapters.Utility;
+import com.example.manisharana.todoapp.Data.UserEntry;
 import com.example.manisharana.todoapp.Models.User;
 import com.example.manisharana.todoapp.R;
 import com.squareup.okhttp.Callback;
@@ -32,10 +37,24 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ContactListFragment extends Fragment {
+public class ContactListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = ContactListFragment.class.getSimpleName();
+    private static final int CONTACT_LOADER = 0;
+    private static final String[] CONTACT_COLUMNS = {
+            UserEntry.TABLE_NAME + "." + UserEntry._ID,
+            UserEntry.COLUMN_NAME,
+            UserEntry.COLUMN_PHOTO_URI,
+            UserEntry.COLUMN_PHONE_NUMBER
+    };
+    public static final int COL_CONTACT_ID = 0;
+    public static final int COL_CONTACT_NAME = 1;
+    public static final int COL_CONTACT_PHOTO = 2;
+    public static final int COL_CONTACT_PHONE_NUMBER = 3;
+
     private ContactListAdapter contactListAdapter;
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,32 +63,18 @@ public class ContactListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.fragment_contact_list, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.list_view_contact_list);
-        contactListAdapter = new ContactListAdapter(getActivity(),R.layout.list_item_contact,new ArrayList<User>());
+
+        contactListAdapter = new ContactListAdapter(getActivity(), null, 0);
         listView.setAdapter(contactListAdapter);
-        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
-
-        swipeRefreshLayout.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
-                        swipeRefreshLayout.setRefreshing(true);
-                        GetAllUsersTask getAllUsersTask = new GetAllUsersTask(getActivity(),swipeRefreshLayout);
-                        getAllUsersTask.execute();
-                    }
-                }
-        );
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                User user = (User) adapterView.getItemAtPosition(i);
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
                 Intent intent = new Intent();
-                intent.putExtra("UserName", user.getName());
-                intent.putExtra("UserPhone", user.getPhoneNumber());
+                intent.putExtra("UserName", cursor.getString(ContactListFragment.COL_CONTACT_NAME));
+                intent.putExtra("UserPhone", cursor.getString(ContactListFragment.COL_CONTACT_PHONE_NUMBER));
                 getActivity().setResult(Activity.RESULT_OK, intent);
                 getActivity().finish();
             }
@@ -77,70 +82,25 @@ public class ContactListFragment extends Fragment {
         return rootView;
     }
 
-
-
-    public class GetAllUsersTask extends AsyncTask<Void, Void, ArrayList<User>> {
-
-        private final Context context;
-        private final SwipeRefreshLayout swipeRefreshLayout;
-        private final Utility mUtility;
-        private OkHttpClient client;
-
-        public GetAllUsersTask(Context context, SwipeRefreshLayout swipeRefreshLayout) {
-            this.context = context;
-            this.swipeRefreshLayout = swipeRefreshLayout;
-            mUtility = new Utility(context);
-
-        }
-
-        @Override
-        protected ArrayList<User> doInBackground(Void... args) {
-            client = new OkHttpClient();
-            final ArrayList<User> users = new ArrayList<>();
-            final HttpUrl url = HttpUrl.parse(getString(R.string.sample_api_base_url)).newBuilder()
-                    .addPathSegment("api")
-                    .addPathSegment("users")
-                    .addEncodedPathSegment(mUtility.getFromPreferences("PhoneNumber"))
-                    .build();
-            final Request request = new Request.Builder()
-                    .url(url)
-                    .get()
-                    .build();
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Request request, IOException e) {
-                    Log.i("Errrrrooooorr","Error in fetching contacts");
-                }
-
-                @Override
-                public void onResponse(Response response) throws IOException {
-                    try {
-                        JSONArray jsonArray = new JSONArray(response.body().string());
-                        for(int i = 0; i<jsonArray.length();i++){
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            String name = jsonObject.getString("name");
-                            String phone = jsonObject.getString("phone");
-                            User user = new User(name, phone);
-                            users.add(user);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            });
-            return users;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<User> users) {
-            super.onPostExecute(users);
-            contactListAdapter.clear();
-            swipeRefreshLayout.setRefreshing(true);
-            contactListAdapter.addAll(users);
-            swipeRefreshLayout.setRefreshing(false);
-        }
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(CONTACT_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String sortOrder = UserEntry.COLUMN_NAME + " ASC";
+        return new CursorLoader(getActivity(), UserEntry.CONTENT_URI, CONTACT_COLUMNS, null, null, sortOrder);
+    }
 
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        contactListAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        contactListAdapter.swapCursor(null);
+    }
 }

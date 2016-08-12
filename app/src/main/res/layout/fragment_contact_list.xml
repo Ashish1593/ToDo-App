@@ -1,13 +1,11 @@
-<android.support.v4.widget.SwipeRefreshLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:id="@+id/swipe_refresh"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="match_parent"
 android:layout_height="match_parent">
-    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ListView
         android:layout_width="match_parent"
         android:id="@+id/list_view_contact_list"
         android:layout_height="match_parent"
         android:fastScrollEnabled="true"
         android:divider="#00000000">
     </ListView>
-</android.support.v4.widget.SwipeRefreshLayout>
+</LinearLayout>

@@ -3,6 +3,9 @@
     package="com.example.manisharana.todoapp">
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
     <application
         android:allowBackup="true"
         android:name=".Activities.MyApplication"
@@ -49,9 +52,42 @@
 
         <provider
             android:authorities="com.example.manisharana.todoapp"
+            android:syncable="true"
             android:name=".Data.TaskProvider"
             android:enabled="true"
             android:exported="true"/>
+
+        <service
+            android:name=".Sync.ToDoAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+        <service
+            android:name="com.example.manisharana.todoapp.Sync.ToDoSyncService"
+            android:exported="true"
+            android:process=":sync">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+        <!--<service-->
+            <!--android:name=".FirebaseMessageService">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.google.firebase.MESSAGING_EVENT"/>-->
+            <!--</intent-filter>-->
+        <!--</service>-->
+        <!--<service-->
+            <!--android:name=".FirebaseIDService">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>-->
+            <!--</intent-filter>-->
+        <!--</service>-->
     </application>
 
 </manifest>

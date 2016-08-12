@@ -22,4 +22,6 @@
     <string name="section_view_holder">section_view_holder</string>
     <string name="item_view_holder">item_view_holder</string>
     <string name="btn_send">Send</string>
+    <string name="sync_account_type">todoapp.example.com</string>
+    <string name="content_authority">com.example.manisharana.todoapp</string>
 </resources>

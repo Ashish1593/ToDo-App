@@ -20,8 +20,6 @@ public class TaskEntry implements BaseColumns{
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://"+ CONTENT_AUTHORITY);
 
     public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TASK_PATH).build();
-    public static final String CONTENT_LIST_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE+"/"+ CONTENT_AUTHORITY+"/"+TASK_PATH;
-    public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE+"/"+ CONTENT_AUTHORITY+"/"+TASK_PATH;
 
 
     public static String getCreateTaskEntry() {

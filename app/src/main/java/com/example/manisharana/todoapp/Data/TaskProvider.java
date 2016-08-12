@@ -123,4 +123,32 @@ public class TaskProvider extends ContentProvider {
         }
         return rowsUpdated;
     }
+
+    @Override
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+        SQLiteDatabase db = taskDbHelper.getWritableDatabase();
+
+        switch (uriMatcher.match(uri)){
+            case USERS:
+                db.beginTransaction();
+                int returnCount = 0;
+                try{
+                    for(ContentValues cv : values){
+                        long id = db.insert(UserEntry.TABLE_NAME,null,cv);
+                        if(id != -1){
+                            returnCount++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                }finally {
+                    db.endTransaction();
+                }
+                getContext().getContentResolver().notifyChange(uri, null);
+
+                return returnCount;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+
+        }
+    }
 }

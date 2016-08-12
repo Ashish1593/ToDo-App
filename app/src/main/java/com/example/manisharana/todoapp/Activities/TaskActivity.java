@@ -193,7 +193,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             mContactName = data.getStringExtra("UserName");
             mPhoneNumber = data.getStringExtra("UserPhone");
             mContactNameView.setText(mContactName);
-            mContactNameView.setText(mPhoneNumber);
+            mContactPhoneNumberView.setText(mPhoneNumber);
         }
     }
 

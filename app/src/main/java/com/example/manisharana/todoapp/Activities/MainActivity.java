@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import com.auth0.core.Token;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private Utility mUtility;
     private LocalBroadcastManager broadcastManager;
 
-    public MainActivity(){
+    public MainActivity() {
         fetchUserTask = new FetchUserTask(this);
     }
 
@@ -43,10 +44,10 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             UserProfile profile = intent.getParcelableExtra(Lock.AUTHENTICATION_ACTION_PROFILE_PARAMETER);
             Token token = intent.getParcelableExtra(Lock.AUTHENTICATION_ACTION_TOKEN_PARAMETER);
-            mUtility.saveToPreferences("AccessToken",token.getIdToken());
-            mUtility.saveToPreferences("PhoneNumber",profile.getName());
+            mUtility.saveToPreferences("AccessToken", token.getIdToken());
+            mUtility.saveToPreferences("PhoneNumber", profile.getName());
             pictureURL = profile.getPictureURL();
-            fetchUserTask.execute(profile.getName(),token.getIdToken());
+            fetchUserTask.execute(profile.getName(), token.getIdToken());
         }
     };
 
@@ -57,11 +58,10 @@ public class MainActivity extends AppCompatActivity {
         mUtility = new Utility(this);
 
         String accessToken = mUtility.getFromPreferences("AccessToken");
-        if (accessToken != null){
+        if (accessToken != null) {
             Intent taskListIntent = new Intent(this, TaskListActivity.class);
             startActivity(taskListIntent);
-        }
-        else {
+        } else {
             LockPasswordlessActivity.showFrom(MainActivity.this, LockPasswordlessActivity.MODE_SMS_CODE);
         }
         broadcastManager = LocalBroadcastManager.getInstance(this);
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         broadcastManager.unregisterReceiver(authenticationReceiver);
     }
 
-    public class FetchUserTask extends AsyncTask<String,User,User> {
+    public class FetchUserTask extends AsyncTask<String, User, User> {
 
         private final Context context;
         private OkHttpClient client;
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         protected User doInBackground(String... args) {
             User user = new User();
             client = new OkHttpClient();
-            String json = getJsonString(args[0],args[1]);
+            String json = getJsonString(args[0], args[1]);
             RequestBody body = RequestBody.create(JSON, json);
             final HttpUrl pingUrl = HttpUrl.parse(getString(R.string.sample_api_base_url)).newBuilder()
                     .addPathSegment("api")
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         private String getJsonString(String phoneNumber, String accessToken) {
             JSONObject requestBody = new JSONObject();
             try {
-                requestBody.put("phone",phoneNumber );
+                requestBody.put("phone", phoneNumber);
                 requestBody.put("accessToken", accessToken);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -131,13 +131,23 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(User user) {
             super.onPostExecute(user);
-            if(user.getName().equals("")){
-                startActivity(RequestActivity.newIntent(MainActivity.this,pictureURL));
+            if (user == null) {
+                String title = "Server Error";
+                String message = "Please retry later.";
+                new AlertDialog.Builder(context,R.style.AppTheme)
+                        .setCancelable(true)
+                        .setTitle(title)
+                        .setMessage(message).create();
 
-            }else{
-                Intent taskListIntent = new Intent(context, TaskListActivity.class);
-                mUtility.saveToPreferences("UserName",user.getName());
-                startActivity(taskListIntent);
+            } else {
+                if (user.getName().equals("")) {
+                    startActivity(RequestActivity.newIntent(MainActivity.this, pictureURL));
+
+                } else {
+                    Intent taskListIntent = new Intent(context, TaskListActivity.class);
+                    mUtility.saveToPreferences("UserName", user.getName());
+                    startActivity(taskListIntent);
+                }
             }
         }
     }
