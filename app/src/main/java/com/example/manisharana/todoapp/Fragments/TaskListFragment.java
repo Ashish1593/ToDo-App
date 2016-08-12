@@ -37,12 +37,14 @@ public class TaskListFragment extends Fragment implements View.OnClickListener {
 
     private static final String LOG_TAG = TaskListFragment.class.getSimpleName();
     private TaskListAdapter taskListAdapter;
+    private Utility mUtility;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_task_list, container, false);
+        mUtility = new Utility(getActivity());
 
         taskListAdapter = new TaskListAdapter(getActivity(),new ArrayList<Task>());
 
@@ -66,7 +68,7 @@ public class TaskListFragment extends Fragment implements View.OnClickListener {
                     public void onRefresh() {
                         Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
                         swipeRefreshLayout.setRefreshing(true);
-                        String phoneNumber = Utility.getFromPreferences(getActivity(), "PhoneNumber");
+                        String phoneNumber = mUtility.getFromPreferences("PhoneNumber");
                         FetchTaskListForUser fetchTaskListForUser = new FetchTaskListForUser(swipeRefreshLayout);
                         fetchTaskListForUser.execute(phoneNumber);
                     }

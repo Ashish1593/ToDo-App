@@ -2,6 +2,10 @@ package com.example.manisharana.todoapp.Adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,12 +15,18 @@ import static java.util.Calendar.getInstance;
 
 public class Utility {
 
-
     private static final TimeZone timeZone;
     private static final String MY_PREFS_NAME = "MyPrefsFile";
+    private static final String KEY_SESSION_ID = "sessionID";
+    private static final String FLAG_MESSAGE = "message";
+    private SharedPreferences sharedPreferences;
 
     static {
         timeZone = TimeZone.getDefault();
+    }
+
+    public Utility(Context context){
+        sharedPreferences = context.getSharedPreferences(MY_PREFS_NAME, context.MODE_PRIVATE);
     }
 
     public static String getFormattedTime(long dateInMillis) {
@@ -70,19 +80,45 @@ public class Utility {
         return currentCal.getTimeInMillis();
     }
 
-    public static void saveToPreferences(Context context, String key, String value){
-        SharedPreferences.Editor editor = context.getSharedPreferences(MY_PREFS_NAME, context.MODE_PRIVATE).edit();
+    public void saveToPreferences(String key, String value){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key, value);
         editor.commit();
     }
 
-    public static String getFromPreferences(Context context, String key){
-        SharedPreferences prefs = context.getSharedPreferences(MY_PREFS_NAME, context.MODE_PRIVATE);
-        return prefs.getString(key, null);
+    public String getFromPreferences(String key){
+        return sharedPreferences.getString(key, null);
     }
 
     public static Calendar getCalendarInstance(){
         return getInstance(timeZone);
+    }
+
+    public void storeSessionId(String sessionId) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_SESSION_ID, sessionId);
+        editor.commit();
+    }
+
+    public String getSessionId() {
+        return sharedPreferences.getString(KEY_SESSION_ID, null);
+    }
+
+    public String getSendMessageJSON(String message) {
+        String json = null;
+
+        try {
+            JSONObject jObj = new JSONObject();
+            jObj.put("flag", FLAG_MESSAGE);
+            jObj.put("sessionId", getSessionId());
+            jObj.put("message", message);
+
+            json = jObj.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return json;
     }
 
 }

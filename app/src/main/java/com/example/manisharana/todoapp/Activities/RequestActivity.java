@@ -35,6 +35,7 @@ public class RequestActivity extends AppCompatActivity {
     private String phoneNumber;
     private EditText username;
     private HttpUrl pingUrl;
+    private Utility mUtility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +43,9 @@ public class RequestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_request);
         Intent intent = getIntent();
         String url = intent.getStringExtra(PICTURE_URL);
-        phoneNumber = Utility.getFromPreferences(this, "PhoneNumber");
+        mUtility = new Utility(this);
+
+        phoneNumber = mUtility.getFromPreferences("PhoneNumber");
 
         client = new OkHttpClient();
         username = (EditText) findViewById(R.id.username_label);
@@ -68,7 +71,7 @@ public class RequestActivity extends AppCompatActivity {
 
     @NonNull
     private Intent getNewIntent() {
-        Utility.saveToPreferences(this,"UserName",username.getText().toString());
+        mUtility.saveToPreferences("UserName",username.getText().toString());
         return new Intent(this, TaskListActivity.class);
     }
 

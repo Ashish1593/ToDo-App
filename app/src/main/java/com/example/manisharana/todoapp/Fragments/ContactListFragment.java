@@ -83,11 +83,14 @@ public class ContactListFragment extends Fragment {
 
         private final Context context;
         private final SwipeRefreshLayout swipeRefreshLayout;
+        private final Utility mUtility;
         private OkHttpClient client;
 
         public GetAllUsersTask(Context context, SwipeRefreshLayout swipeRefreshLayout) {
             this.context = context;
             this.swipeRefreshLayout = swipeRefreshLayout;
+            mUtility = new Utility(context);
+
         }
 
         @Override
@@ -97,7 +100,7 @@ public class ContactListFragment extends Fragment {
             final HttpUrl url = HttpUrl.parse(getString(R.string.sample_api_base_url)).newBuilder()
                     .addPathSegment("api")
                     .addPathSegment("users")
-                    .addEncodedPathSegment(Utility.getFromPreferences(context,"PhoneNumber"))
+                    .addEncodedPathSegment(mUtility.getFromPreferences("PhoneNumber"))
                     .build();
             final Request request = new Request.Builder()
                     .url(url)

@@ -40,6 +40,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private Task mTask;
     private TextView mContactNameView;
     private TextView mContactPhoneNumberView;
+    private Utility mUtility;
 
     public TaskActivity() {
         mTask = new Task();
@@ -52,6 +53,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_task);
         getSupportActionBar().setElevation(0);
         Calendar cal = Utility.getCalendarInstance();
+        mUtility = new Utility(this);
 
         mTitleView = (TextView) this.findViewById(R.id.editText_task_title);
         mDateView = (EditText) this.findViewById(R.id.editText_task_date);
@@ -169,8 +171,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private Task getTask() {
         String title = mTitleView.getText().toString();
         mSelectedTimeInMillis = getSelectedTime(mYear, mMonth, mDay, mHour, mMinute);
-        String myPhoneNumber = Utility.getFromPreferences(this, "PhoneNumber");
-        String me = Utility.getFromPreferences(this, "UserName");
+        String myPhoneNumber = mUtility.getFromPreferences("PhoneNumber");
+        String me = mUtility.getFromPreferences("UserName");
         if (mContactName.equals("") && mPhoneNumber.equals("")) {
             mContactName = me;
             mPhoneNumber = myPhoneNumber;

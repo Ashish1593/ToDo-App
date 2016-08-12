@@ -21,4 +21,5 @@
     <string name="save_details">Save</string>
     <string name="section_view_holder">section_view_holder</string>
     <string name="item_view_holder">item_view_holder</string>
+    <string name="btn_send">Send</string>
 </resources>

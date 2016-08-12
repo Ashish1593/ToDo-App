@@ -30,6 +30,7 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     private final FetchUserTask fetchUserTask;
+    private Utility mUtility;
     private LocalBroadcastManager broadcastManager;
 
     public MainActivity(){
@@ -42,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             UserProfile profile = intent.getParcelableExtra(Lock.AUTHENTICATION_ACTION_PROFILE_PARAMETER);
             Token token = intent.getParcelableExtra(Lock.AUTHENTICATION_ACTION_TOKEN_PARAMETER);
-            Utility.saveToPreferences(context,"AccessToken",token.getIdToken());
-            Utility.saveToPreferences(context,"PhoneNumber",profile.getName());
+            mUtility.saveToPreferences("AccessToken",token.getIdToken());
+            mUtility.saveToPreferences("PhoneNumber",profile.getName());
             pictureURL = profile.getPictureURL();
             fetchUserTask.execute(profile.getName(),token.getIdToken());
         }
@@ -53,7 +54,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String accessToken = Utility.getFromPreferences(this, "AccessToken");
+        mUtility = new Utility(this);
+
+        String accessToken = mUtility.getFromPreferences("AccessToken");
         if (accessToken != null){
             Intent taskListIntent = new Intent(this, TaskListActivity.class);
             startActivity(taskListIntent);
@@ -133,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
             }else{
                 Intent taskListIntent = new Intent(context, TaskListActivity.class);
-                Utility.saveToPreferences(context,"UserName",user.getName());
+                mUtility.saveToPreferences("UserName",user.getName());
                 startActivity(taskListIntent);
             }
         }
