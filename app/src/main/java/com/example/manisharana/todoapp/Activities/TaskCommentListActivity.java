@@ -27,7 +27,6 @@ import java.util.ArrayList;
 public class TaskCommentListActivity extends AppCompatActivity {
 
     private static final String TAG = TaskCommentListActivity.class.getSimpleName();
-    private static final String TAG_SELF = "self", TAG_NEW = "new", TAG_MESSAGE = "message", TAG_EXIT = "exit";
     private Button mSendBtn;
     private EditText mInputMsg;
     private ListView mListview;

@@ -55,11 +55,6 @@ public class TaskListFragment extends Fragment implements View.OnClickListener {
         mRecyclerView.setAdapter(taskListAdapter);
 
         mRecyclerView.setOnClickListener(this);
-
-
-//       ListView listView = (ListView) rootView.findViewById(R.id.list_view_task_list);
-//       listView.setAdapter(taskListAdapter);
-
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
 
         swipeRefreshLayout.setOnRefreshListener(
@@ -141,7 +136,7 @@ public class TaskListFragment extends Fragment implements View.OnClickListener {
                     String taskId = object.getString("id");
                     JSONObject taskData = object.getJSONObject("data");
                     String title = taskData.getString("title");
-                    long date = taskData.getLong("date");
+                    String date = taskData.getString("date");
                     boolean status = taskData.getBoolean("status");
                     String assgnByPhon = taskData.getString("assgnByPhon");
                     String assgnToName = taskData.getString("assgnToName");

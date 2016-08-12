@@ -100,7 +100,7 @@ public class ToDoSyncAdapter extends AbstractThreadedSyncAdapter {
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         ContentResolver.requestSync(getSyncAccount(context),
                 context.getString(R.string.content_authority), bundle);
-        progressDialog.cancel();
+        progressDialog.dismiss();
     }
 
     public static Account getSyncAccount(Context context) {

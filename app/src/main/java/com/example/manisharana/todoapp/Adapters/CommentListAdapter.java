@@ -23,8 +23,6 @@ public class CommentListAdapter extends BaseAdapter{
         this.comments = comments;
     }
 
-
-
     @Override
     public int getCount() {
         return comments.size();

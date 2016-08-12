@@ -9,6 +9,8 @@ import android.support.v7.app.AlertDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,46 +31,48 @@ public class Utility {
         timeZone = TimeZone.getDefault();
     }
 
-    public Utility(Context context){
+    public Utility(Context context) {
         this.mContext = context;
         sharedPreferences = context.getSharedPreferences(MY_PREFS_NAME, context.MODE_PRIVATE);
     }
 
-    public static String getFormattedTime(long dateInMillis) {
-        Date date = new Date(dateInMillis);
+    public static String getFormattedTime(String dateInMillis) {
+
+        Date date = getDateFromString(dateInMillis);
         SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("HH:mm a");
         shortenedDateFormat.setTimeZone(timeZone);
         String day = shortenedDateFormat.format(date.getTime());
         return day;
     }
 
-    public static String getFriendlyDayString(long dateInMillis) {
+    public static String getFriendlyDayString(String dateInMillis) {
+        Date taskDate = getDateFromString(dateInMillis);
         Calendar taskCal = getCalendarInstance();
-        taskCal.setTimeInMillis(dateInMillis);
+        taskCal.setTime(taskDate);
 
         long currentTimeMillis = System.currentTimeMillis();
         Calendar cal = getCalendarInstance();
 
         if (taskCal.getTimeInMillis() < currentTimeMillis)
             return "Overdue";
-        else if (taskCal.getTimeInMillis() < getTimeInMillis(cal,1)) {
+        else if (taskCal.getTimeInMillis() < getTimeInMillis(cal, 1)) {
             return "Today";
-        }else if(taskCal.getTimeInMillis() < getTimeInMillis(cal,2)){
+        } else if (taskCal.getTimeInMillis() < getTimeInMillis(cal, 2)) {
             return "Tomorrow";
-        }else if(taskCal.getTimeInMillis() < getUpComingMondayTimeInMillis(cal)){
+        } else if (taskCal.getTimeInMillis() < getUpComingMondayTimeInMillis(cal)) {
             SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEEE");
             shortenedDateFormat.setTimeZone(timeZone);
-            return shortenedDateFormat.format(dateInMillis);
-        }else{
+            return shortenedDateFormat.format(taskDate);
+        } else {
             SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
             shortenedDateFormat.setTimeZone(timeZone);
-            return shortenedDateFormat.format(dateInMillis);
+            return shortenedDateFormat.format(taskDate);
         }
-     }
+    }
 
     private static long getTimeInMillis(Calendar cal, int addDate) {
         int currentDate = cal.get(Calendar.DATE);
-        cal.set(Calendar.DATE,currentDate+addDate);
+        cal.set(Calendar.DATE, currentDate + addDate);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.MILLISECOND, 0);
@@ -77,25 +81,25 @@ public class Utility {
     }
 
     private static long getUpComingMondayTimeInMillis(Calendar currentCal) {
-        currentCal.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
-        currentCal.set(Calendar.HOUR_OF_DAY,0);
-        currentCal.set(Calendar.MINUTE,0);
-        currentCal.set(Calendar.SECOND,0);
-        currentCal.add(Calendar.DATE,8);
+        currentCal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        currentCal.set(Calendar.HOUR_OF_DAY, 0);
+        currentCal.set(Calendar.MINUTE, 0);
+        currentCal.set(Calendar.SECOND, 0);
+        currentCal.add(Calendar.DATE, 8);
         return currentCal.getTimeInMillis();
     }
 
-    public void saveToPreferences(String key, String value){
+    public void saveToPreferences(String key, String value) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key, value);
         editor.commit();
     }
 
-    public String getFromPreferences(String key){
+    public String getFromPreferences(String key) {
         return sharedPreferences.getString(key, null);
     }
 
-    public static Calendar getCalendarInstance(){
+    public static Calendar getCalendarInstance() {
         return getInstance(timeZone);
     }
 
@@ -140,12 +144,31 @@ public class Utility {
         alert.show();
     }
 
-    public ProgressDialog getProgressDialog(String message){
-        ProgressDialog progress=new ProgressDialog(mContext);
+    public ProgressDialog getProgressDialog(String message) {
+        ProgressDialog progress = new ProgressDialog(mContext);
         progress.setTitle("Downloading");
         progress.setMessage(message);
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progress.setIndeterminate(true);
         return progress;
     }
+
+    public static Date getDateFromString(String input) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        df.setTimeZone(timeZone);
+        try {
+            return df.parse(input);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String getDateFromMillis(long timeInMillis) {
+        Date date = new Date(timeInMillis);
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        df.setTimeZone(timeZone);
+        return df.format(date);
+    }
 }
+

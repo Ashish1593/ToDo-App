@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class Task implements Serializable{
     private String title;
     private String id;
-    private long date;
+    private String date;
     private boolean status;
     private String assignByName;
     private String assignByPhone;
@@ -15,7 +15,7 @@ public class Task implements Serializable{
     public Task() {
         this.title = "";
         this.id = "";
-        this.date = -1;
+        this.date = "";
         this.status = true;
         this.assignByName = "";
         this.assignByPhone = "";
@@ -24,7 +24,7 @@ public class Task implements Serializable{
     }
 
 
-    public Task(String title, String id, long date, boolean status, String assignByName, String assignByPhone, String assignToName, String assignToPhone) {
+    public Task(String title, String id, String date, boolean status, String assignByName, String assignByPhone, String assignToName, String assignToPhone) {
         this.title = title;
         this.id = id;
         this.date = date;
@@ -35,7 +35,7 @@ public class Task implements Serializable{
         this.assignToPhone = assignToPhone;
     }
 
-    public Task(String title, long date, boolean status, String assignByName, String assignByPhone, String assignToName, String assignToPhone) {
+    public Task(String title, String date, boolean status, String assignByName, String assignByPhone, String assignToName, String assignToPhone) {
         this.title = title;
         this.id = "";
         this.date = date;
@@ -63,11 +63,11 @@ public class Task implements Serializable{
         this.id = id;
     }
 
-    public long getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(long date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

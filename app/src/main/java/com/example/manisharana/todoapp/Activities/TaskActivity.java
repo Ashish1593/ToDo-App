@@ -35,7 +35,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private String mContactName = "";
     private String mPhotoUri;
     private String mPhoneNumber = "";
-    private long mSelectedTimeInMillis;
+    private String mSelectedTimeInMillis;
     private ImageButton mAddContactButton;
     private Task mTask;
     private TextView mContactNameView;
@@ -82,7 +82,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void prepopulateTaskData(Task taskToBeEdited, Calendar cal) {
-        cal.setTimeInMillis(taskToBeEdited.getDate());
+        cal.setTime(mUtility.getDateFromString(taskToBeEdited.getDate()));
         mTitleView.setTextColor(getResources().getColor(R.color.colorAccent));
         mTaskAssignedToView.setText("Task Assigned To");
         mTitleView.setText(taskToBeEdited.getTitle());
@@ -150,7 +150,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private long getSelectedTime(int year, int month, int day, int hour, int minute) {
+    private String getSelectedTime(int year, int month, int day, int hour, int minute) {
         Calendar c = Calendar.getInstance(TimeZone.getTimeZone("Asia/Calcutta"));
         if (year != 0 && month != 0 && day != 0) {
             c.set(Calendar.YEAR, year);
@@ -165,7 +165,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
-        return c.getTimeInMillis();
+        return mUtility.getDateFromMillis(c.getTimeInMillis());
     }
 
 
