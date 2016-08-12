@@ -12,6 +12,17 @@ public class Task implements Serializable{
     private String assignToName;
     private String assignToPhone;
 
+    public Task() {
+        this.title = "";
+        this.id = "";
+        this.date = -1;
+        this.status = true;
+        this.assignByName = "";
+        this.assignByPhone = "";
+        this.assignToName = "";
+        this.assignToPhone = "";
+    }
+
 
     public Task(String title, String id, long date, boolean status, String assignByName, String assignByPhone, String assignToName, String assignToPhone) {
         this.title = title;
@@ -26,6 +37,7 @@ public class Task implements Serializable{
 
     public Task(String title, long date, boolean status, String assignByName, String assignByPhone, String assignToName, String assignToPhone) {
         this.title = title;
+        this.id = "";
         this.date = date;
         this.status = status;
         this.assignByName = assignByName;
@@ -34,9 +46,6 @@ public class Task implements Serializable{
         this.assignToPhone = assignToPhone;
     }
 
-    public Task() {
-
-    }
 
     public String getTitle() {
         return title;
@@ -100,10 +109,5 @@ public class Task implements Serializable{
 
     public void setAssignToPhone(String assignToPhone) {
         this.assignToPhone = assignToPhone;
-    }
-
-    @Override
-    public String toString() {
-        return "Task name: "+getTitle();
     }
 }

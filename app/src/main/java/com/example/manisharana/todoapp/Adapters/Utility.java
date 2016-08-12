@@ -1,7 +1,10 @@
 package com.example.manisharana.todoapp.Adapters;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +22,7 @@ public class Utility {
     private static final String MY_PREFS_NAME = "MyPrefsFile";
     private static final String KEY_SESSION_ID = "sessionID";
     private static final String FLAG_MESSAGE = "message";
+    private final Context mContext;
     private SharedPreferences sharedPreferences;
 
     static {
@@ -26,6 +30,7 @@ public class Utility {
     }
 
     public Utility(Context context){
+        this.mContext = context;
         sharedPreferences = context.getSharedPreferences(MY_PREFS_NAME, context.MODE_PRIVATE);
     }
 
@@ -121,4 +126,26 @@ public class Utility {
         return json;
     }
 
+    public void showAlertDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setMessage(message)
+                .setTitle("Error")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    public ProgressDialog getProgressDialog(String message){
+        ProgressDialog progress=new ProgressDialog(mContext);
+        progress.setTitle("Downloading");
+        progress.setMessage(message);
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setIndeterminate(true);
+        return progress;
+    }
 }

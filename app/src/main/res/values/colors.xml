@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#47C9AF</color>
     <color name="colorPrimaryDark">#44B39D</color>
-    <color name="colorAccent">#F07818</color>
+    <color name="colorAccent">#F9690E</color>
     <color name="request_fail">#ff0000</color>
     <color name="request_success">#00ff00</color>
     <color name="actionbar">#3cb879</color>

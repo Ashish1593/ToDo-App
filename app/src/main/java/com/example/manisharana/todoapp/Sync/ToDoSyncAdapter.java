@@ -2,6 +2,7 @@ package com.example.manisharana.todoapp.Sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.ProgressDialog;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -92,11 +93,14 @@ public class ToDoSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     public static void syncImmediately(Context context) {
+        ProgressDialog progressDialog = new Utility(context).getProgressDialog("Fetching Contacts");
+        progressDialog.show();
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         ContentResolver.requestSync(getSyncAccount(context),
                 context.getString(R.string.content_authority), bundle);
+        progressDialog.cancel();
     }
 
     public static Account getSyncAccount(Context context) {

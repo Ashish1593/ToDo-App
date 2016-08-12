@@ -32,18 +32,19 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private int mDay;
     private int mHour;
     private int mMinute;
-    private String mContactName;
+    private String mContactName = "";
     private String mPhotoUri;
-    private String mPhoneNumber;
+    private String mPhoneNumber = "";
     private long mSelectedTimeInMillis;
     private ImageButton mAddContactButton;
     private Task mTask;
     private TextView mContactNameView;
     private TextView mContactPhoneNumberView;
     private Utility mUtility;
+    private TextView mTaskAssignedToView;
 
     public TaskActivity() {
-        mTask = new Task();
+
     }
 
 
@@ -61,6 +62,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         mAddContactButton = (ImageButton) this.findViewById(R.id.image_button_assign_contact);
         mContactNameView = (TextView) this.findViewById(R.id.text_view_assigned_contact_name);
         mContactPhoneNumberView = (TextView) this.findViewById(R.id.text_view_assigned_contact_phone_number);
+        mTaskAssignedToView = (TextView) findViewById(R.id.text_view_set_reminder);
 
         mAddContactButton.setOnClickListener(this);
 
@@ -68,10 +70,12 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             Intent intent = getIntent();
             mTask = (Task) intent.getSerializableExtra("Task");
             if (mTask != null) {
+                mAddContactButton.setVisibility(View.INVISIBLE);
                 prepopulateTaskData(mTask, cal);
                 setDefaultDateTimeView(mDateView, mTimeView, cal);
 
             } else {
+                mTask = new Task();
                 setDefaultDateTimeView(mDateView, mTimeView, cal);
             }
         }
@@ -79,6 +83,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
     private void prepopulateTaskData(Task taskToBeEdited, Calendar cal) {
         cal.setTimeInMillis(taskToBeEdited.getDate());
+        mTitleView.setTextColor(getResources().getColor(R.color.colorAccent));
+        mTaskAssignedToView.setText("Task Assigned To");
         mTitleView.setText(taskToBeEdited.getTitle());
         mTitleView.setEnabled(false);
         mContactNameView.setText(taskToBeEdited.getAssignToName());
@@ -165,11 +171,20 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
     void saveButtonClicked(View view) {
         Task newTask = getTask();
-        new SaveTask(this).execute(newTask);
+        if(newTask != null){
+            new SaveTask(this).execute(newTask);
+        }else {
+            String message = "Error occured during save task";
+            mUtility.showAlertDialog(message);
+        }
+
     }
 
     private Task getTask() {
         String title = mTitleView.getText().toString();
+        if(title.isEmpty()){
+            return null;
+        }
         mSelectedTimeInMillis = getSelectedTime(mYear, mMonth, mDay, mHour, mMinute);
         String myPhoneNumber = mUtility.getFromPreferences("PhoneNumber");
         String me = mUtility.getFromPreferences("UserName");
@@ -192,6 +207,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         if (requestCode == PICK_CONTACT && resultCode == RESULT_OK) {
             mContactName = data.getStringExtra("UserName");
             mPhoneNumber = data.getStringExtra("UserPhone");
+            mTaskAssignedToView.setText("Task Assigned To");
             mContactNameView.setText(mContactName);
             mContactPhoneNumberView.setText(mPhoneNumber);
         }
