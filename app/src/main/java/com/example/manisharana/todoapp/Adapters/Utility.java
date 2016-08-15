@@ -147,6 +147,7 @@ public class Utility {
     public ProgressDialog getProgressDialog(String message) {
         ProgressDialog progress = new ProgressDialog(mContext);
         progress.setTitle("Downloading");
+        progress.setCancelable(false);
         progress.setMessage(message);
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progress.setIndeterminate(true);
