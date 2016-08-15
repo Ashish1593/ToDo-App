@@ -1,5 +1,6 @@
 package com.example.manisharana.todoapp.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -13,14 +14,13 @@ import android.widget.Toast;
 import com.example.manisharana.todoapp.Adapters.CommentListAdapter;
 import com.example.manisharana.todoapp.Adapters.Utility;
 import com.example.manisharana.todoapp.Models.Comment;
+import com.example.manisharana.todoapp.Models.Task;
 import com.example.manisharana.todoapp.R;
 
 import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
@@ -38,11 +38,22 @@ public class TaskCommentListActivity extends AppCompatActivity {
     private ArrayList<Comment> mCommentList;
     private CommentListAdapter mAdapter;
     private WebSocketClient mWebSocketClient;
+    private Task mTask;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getIntent() != null) {
+            Intent intent = getIntent();
+            mTask = (Task) intent.getSerializableExtra("Task");
+            if (mTask != null) {
+                setTitle(mTask.getTitle());
+            }
+
+        }
+
         setContentView(R.layout.activity_task_comments);
+
         mSendBtn = (Button) findViewById(R.id.btnSend);
         mInputMsg = (EditText) findViewById(R.id.inputMsg);
         mListview = (ListView) findViewById(R.id.list_view_messages);

@@ -2,9 +2,7 @@ package com.example.manisharana.todoapp.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,18 +15,7 @@ import com.example.manisharana.todoapp.Activities.TaskCommentListActivity;
 import com.example.manisharana.todoapp.AsyncTasks.UpdateTask;
 import com.example.manisharana.todoapp.Models.Task;
 import com.example.manisharana.todoapp.R;
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.HttpUrl;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -135,6 +122,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         setOnClickListenerOnButton(holder.taskStatusButton, task);
         setOnClickListenerOnView(holder.rootView, task);
+        setOnClickListenerOnEditButton(holder.editTaskButton,task);
 
     }
 
@@ -150,7 +138,27 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         setOnClickListenerOnButton(holder.taskStatusButton, task);
         setOnClickListenerOnView(holder.rootView, task);
+        setOnClickListenerOnEditButton(holder.editTaskButton,task);
     }
+
+
+    private void setOnClickListenerOnEditButton(ImageButton editTaskButton, final Task task) {
+        editTaskButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = getTaskEditIntent(task);
+                context.startActivity(intent);
+            }
+        });
+
+    }
+
+    private Intent getTaskEditIntent(Task task) {
+        Intent intent = new Intent(context, TaskActivity.class);
+        intent.putExtra("Task", task);
+        return intent;
+    }
+
 
     private void setOnClickListenerOnButton(final ImageButton taskStatusButton, final Task task) {
         taskStatusButton.setOnClickListener(new View.OnClickListener() {
@@ -180,6 +188,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private final TextView titleView;
         private final TextView dateView;
         private final LinearLayout rootView;
+        private final ImageButton editTaskButton;
 
         public TaskViewHolder(View itemView) {
             super(itemView);
@@ -187,6 +196,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             titleView = (TextView) itemView.findViewById(R.id.text_view_task_title);
             dateView = (TextView) itemView.findViewById(R.id.text_view_task_time);
             rootView = (LinearLayout) itemView.findViewById(R.id.section_view_list_item_task);
+            editTaskButton = (ImageButton) itemView.findViewById(R.id.image_button_task_edit);
+
         }
 
     }
@@ -198,6 +209,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private final TextView titleView;
         private final TextView dateView;
         private final LinearLayout rootView;
+        private final ImageButton editTaskButton;
 
         public SectionViewHolder(View itemView) {
             super(itemView);
@@ -206,6 +218,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             titleView = (TextView) itemView.findViewById(R.id.text_view_task_title);
             dateView = (TextView) itemView.findViewById(R.id.text_view_task_time);
             rootView = (LinearLayout) itemView.findViewById(R.id.section_view_list_item_task);
+            editTaskButton = (ImageButton) itemView.findViewById(R.id.image_button_task_edit);
         }
 
     }

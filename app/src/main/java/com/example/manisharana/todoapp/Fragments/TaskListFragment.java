@@ -33,7 +33,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class TaskListFragment extends Fragment implements View.OnClickListener {
+public class TaskListFragment extends Fragment{
 
     private static final String LOG_TAG = TaskListFragment.class.getSimpleName();
     private TaskListAdapter taskListAdapter;
@@ -54,7 +54,6 @@ public class TaskListFragment extends Fragment implements View.OnClickListener {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(taskListAdapter);
 
-        mRecyclerView.setOnClickListener(this);
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
 
         swipeRefreshLayout.setOnRefreshListener(
@@ -77,12 +76,6 @@ public class TaskListFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onClick(View view) {
-        Intent intent = new Intent(getActivity(), TaskActivity.class);
-        startActivity(intent);
     }
 
     public class FetchTaskListForUser extends AsyncTask<String, String, Void> implements Callback {
