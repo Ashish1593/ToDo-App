@@ -43,9 +43,9 @@ public class CommentListAdapter extends BaseAdapter{
         Comment comment = comments.get(i);
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         if(comment.isSelf()){
-            view = layoutInflater.inflate(R.layout.list_item_message_right,viewGroup);
+            view = layoutInflater.inflate(R.layout.list_item_message_right,viewGroup,false);
         }else {
-            view = layoutInflater.inflate(R.layout.list_item_message_left,viewGroup);
+            view = layoutInflater.inflate(R.layout.list_item_message_left,viewGroup,false);
         }
 
         TextView lblFrom = (TextView) view.findViewById(R.id.lblMsgFrom);

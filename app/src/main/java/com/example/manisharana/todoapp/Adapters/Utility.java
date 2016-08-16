@@ -113,23 +113,6 @@ public class Utility {
         return sharedPreferences.getString(KEY_SESSION_ID, null);
     }
 
-    public String getSendMessageJSON(String message) {
-        String json = null;
-
-        try {
-            JSONObject jObj = new JSONObject();
-            jObj.put("flag", FLAG_MESSAGE);
-            jObj.put("sessionId", getSessionId());
-            jObj.put("message", message);
-
-            json = jObj.toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return json;
-    }
-
     public void showAlertDialog(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setMessage(message)

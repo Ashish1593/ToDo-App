@@ -9,22 +9,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
-
 import com.example.manisharana.todoapp.Adapters.CommentListAdapter;
 import com.example.manisharana.todoapp.Adapters.Utility;
 import com.example.manisharana.todoapp.Models.Comment;
 import com.example.manisharana.todoapp.Models.Task;
 import com.example.manisharana.todoapp.R;
 
-import org.java_websocket.client.WebSocketClient;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-
-import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
@@ -37,8 +30,8 @@ public class TaskCommentListActivity extends AppCompatActivity {
     private Utility mUtility;
     private ArrayList<Comment> mCommentList;
     private CommentListAdapter mAdapter;
-    private WebSocketClient mWebSocketClient;
     private Task mTask;
+    private Socket mSocket;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,114 +46,55 @@ public class TaskCommentListActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_task_comments);
-
         mSendBtn = (Button) findViewById(R.id.btnSend);
         mInputMsg = (EditText) findViewById(R.id.inputMsg);
         mListview = (ListView) findViewById(R.id.list_view_messages);
         mUtility = new Utility(this);
+        mSocket = ((MyApplication)getApplication()).getSocket();
+
 
         connectWebSocket();
-        mSendBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendMessageToServer(mUtility.getSendMessageJSON(mInputMsg.getText().toString()));
-                mInputMsg.setText("");
-            }
-        });
         mCommentList = new ArrayList<Comment>();
         mAdapter = new CommentListAdapter(this, mCommentList);
         mListview.setAdapter(mAdapter);
 
-    }
-
-    private void connectWebSocket() {
-        try {
-            final Socket socket = IO.socket("http://192.168.42.174:3000/");
-            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-
-                @Override
-                public void call(Object... args) {
-                    Log.i("LOgggggggg","On call connected");
-                    socket.emit("joinroom", "stackoverflow");
-                }
-
-            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
-
-                @Override
-                public void call(Object... args) {
-                    Log.i("LOgggggggg","On call connected");
-                }
-
-            });
-            socket.connect();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-
-//        URI uri = null;
-//        try {
-//            uri = new URI("ws://192.168.42.174:3000/");
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        }
-//
-//        mWebSocketClient = new WebSocketClient(uri) {
-//
-//            @Override
-//            public void onOpen(ServerHandshake handshakedata) {
-//                Log.i(TAG,"WebSocket Open");
-//            }
-//
-//            @Override
-//            public void onMessage(String message) {
-//                Log.d(TAG, String.format("Got string message! %s", message));
-//
-//                parseMessage(message);
-//            }
-//
-//            @Override
-//            public void onClose(int code, String reason, boolean remote) {
-//                String message = String.format("Disconnected! Code: %d Reason: %s", code, reason);
-//                showToast(message);
-//
-//                mUtility.storeSessionId(null);
-//            }
-//
-//            @Override
-//            public void onError(Exception error) {
-//                Log.e(TAG, "Error! : " + error);
-//
-//                showToast("Error! : " + error);
-//            }
-//        };
-//        mWebSocketClient.connect();
-//    }
-    }
-
-    private void showToast(final String message) {
-        runOnUiThread(new Runnable() {
-
+        mSendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-
-                Toast.makeText(getApplicationContext(), message,Toast.LENGTH_SHORT).show();
+            public void onClick(View view) {
+                String input = mInputMsg.getText().toString();
+                mCommentList.add(new Comment(mTask.getAssignByName(),input,true));
+                mAdapter.notifyDataSetChanged();
+                sendMessageToServer(input);
+                mInputMsg.setText("");
             }
         });
     }
 
+    private void connectWebSocket() {
+        mSocket.on("private", new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                Log.i("on new message",args[0].toString());
+                parseMessage(args[0].toString());
+            }
+
+        });
+        mSocket.connect();
+    }
+
     private void parseMessage(String message) {
+        boolean isSelf = false;
         try {
             JSONObject jsonObject = new JSONObject(message);
             String fromName = jsonObject.getString("name");
-            String commentData = jsonObject.getString("message");
-            String sessionId = jsonObject.getString("sessionId");
-            boolean isSelf = true;
+            String commentData = jsonObject.getString("msg");
 
-            if (!sessionId.equals(mUtility.getSessionId())) {
-                fromName = jsonObject.getString("name");
-                isSelf = false;
+            if (fromName.equals(mUtility.getFromPreferences("UserName"))) {
+                isSelf = true;
             }
+            int colonIndex = commentData.indexOf(":");
+            commentData = commentData.substring(colonIndex+1);
 
             Comment comment = new Comment(fromName, commentData, isSelf);
             appendMessage(comment);
@@ -172,9 +106,9 @@ public class TaskCommentListActivity extends AppCompatActivity {
 
     }
 
-    private void sendMessageToServer(String sendMessageJSON) {
-        if(mWebSocketClient != null)
-            mWebSocketClient.send(sendMessageJSON);
+    private void sendMessageToServer(String inputString) {
+        if( mSocket != null)
+            mSocket.emit("sendmessage",inputString);
     }
 
     private void appendMessage(final Comment comment) {
@@ -192,8 +126,8 @@ public class TaskCommentListActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        if(mWebSocketClient != null){
-            mWebSocketClient.close();
+        if(mSocket != null){
+            mSocket.close();
         }
     }
 

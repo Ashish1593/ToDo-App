@@ -1,11 +1,12 @@
 package com.example.manisharana.todoapp.AsyncTasks;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+import com.example.manisharana.todoapp.Activities.MyApplication;
 import com.example.manisharana.todoapp.Activities.TaskListActivity;
 import com.example.manisharana.todoapp.Adapters.TaskUtility;
 import com.example.manisharana.todoapp.Models.Task;
@@ -17,19 +18,29 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+
+import io.socket.client.Socket;
 
 public class SaveTask extends AsyncTask<Task, String, String> {
 
-    private final Context mContext;
+    private static final String LOG_TAG = SaveTask.class.getSimpleName();
+    private final Activity mContext;
     public final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private final Socket mSocket;
 
-    public SaveTask(Context context) {
-        this.mContext = context;
+    public SaveTask(Activity context) {
+        mContext = context;
+        mSocket = ((MyApplication)context.getApplication()).getSocket();
+
     }
 
     @Override
-    protected String doInBackground(Task... args) {
+    protected String doInBackground(final Task... args) {
         OkHttpClient client = new OkHttpClient();
         HttpUrl url = HttpUrl.parse(mContext.getString(R.string.sample_api_base_url)).newBuilder()
                 .addPathSegment("api")
@@ -44,6 +55,8 @@ public class SaveTask extends AsyncTask<Task, String, String> {
             request = builder
                     .post(body)
                     .build();
+
+
         }else{
             String updateTaskJson = TaskUtility.getUpdatedTaskJson(args[0]);
             RequestBody body = RequestBody.create(JSON, updateTaskJson);
@@ -56,21 +69,33 @@ public class SaveTask extends AsyncTask<Task, String, String> {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                Log.i("Errror", "Cannot add tasks");
-                new AlertDialog.Builder(mContext)
-                        .setTitle(R.string.error)
-                        .setMessage("Error Inserting Record")
-                        .setCancelable(true)
-                        .create().show();
+                Log.i("Error", "Cannot add tasks");
             }
 
             @Override
             public void onResponse(Response response) throws IOException {
                 Intent intent = getIntentData();
                 mContext.startActivity(intent);
+                mSocket.emit("newTask",getJsonObject(args[0].getAssignToName(),args[0].getAssignByName()));
             }
         });
+
         return null;
+    }
+
+    private void registerSocketListeners(final Task task) {
+        Log.i(LOG_TAG,"On connected");
+    }
+
+    private JSONObject getJsonObject(String assignToName, String assignByName) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("assgnTo",assignToName);
+            jsonObject.put("from",assignByName);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
     }
 
 
