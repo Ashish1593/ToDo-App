@@ -1,9 +1,15 @@
 package com.example.manisharana.todoapp.Activities;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -27,11 +33,11 @@ public class TaskCommentListActivity extends AppCompatActivity {
     private Button mSendBtn;
     private EditText mInputMsg;
     private ListView mListview;
-    private Utility mUtility;
     private ArrayList<Comment> mCommentList;
     private CommentListAdapter mAdapter;
     private Task mTask;
     private Socket mSocket;
+    private String mUserName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,7 +51,6 @@ public class TaskCommentListActivity extends AppCompatActivity {
                     mCommentList = new ArrayList<Comment>();
                 }else{
                     mCommentList = mTask.getComments();
-
                 }
             }
 
@@ -55,7 +60,7 @@ public class TaskCommentListActivity extends AppCompatActivity {
         mSendBtn = (Button) findViewById(R.id.btnSend);
         mInputMsg = (EditText) findViewById(R.id.inputMsg);
         mListview = (ListView) findViewById(R.id.list_view_messages);
-        mUtility = new Utility(this);
+        mUserName = new Utility(this).getFromPreferences("UserName");
         mSocket = ((MyApplication)getApplication()).getSocket();
 
 
@@ -67,9 +72,9 @@ public class TaskCommentListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String input = mInputMsg.getText().toString();
-                mCommentList.add(new Comment(mTask.getAssignByName(),input,true));
+                mCommentList.add(new Comment(mUserName,input,true));
                 mAdapter.notifyDataSetChanged();
-                sendMessageToServer(input);
+                sendMessageToServer(mUserName+":"+input+"\n");
                 mInputMsg.setText("");
             }
         });
@@ -81,48 +86,118 @@ public class TaskCommentListActivity extends AppCompatActivity {
             @Override
             public void call(Object... args) {
                 Log.i("on new message",args[0].toString());
-                parseMessage(args[0].toString());
+               // parseMessage(args[0].toString());
             }
 
+        }).on("notifyComment", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Log.i("on new comment",args[0].toString());
+                parseComment(args[0].toString());
+            }
         });
         mSocket.connect();
     }
 
-    private void parseMessage(String message) {
+    private void createNewCommentNotification(String commentFrom) {
+        playBeep();
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setSmallIcon(R.mipmap.ic_launcher);
+        mBuilder.setContentTitle(getString(R.string.app_name));
+        mBuilder.setContentText("You have a new comment from "+commentFrom+"!!");
+        int notificationID = 100;
+        mNotificationManager.notify(notificationID, mBuilder.build());
+
+    }
+
+    private void playBeep() {
+        Uri defaultUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone ringtone = RingtoneManager.getRingtone(this, defaultUri);
+        ringtone.play();
+    }
+
+
+    private void parseComment(String commentString) {
         boolean isSelf = false;
         try {
-            JSONObject jsonObject = new JSONObject(message);
-            String fromName = jsonObject.getString("name");
-            String commentData = jsonObject.getString("msg");
+            JSONObject jsonObject = new JSONObject(commentString);
+            String id = jsonObject.getString("id");
+            String commentData = jsonObject.getString("comment");
+            String commentFrom = jsonObject.getString("commentFrom");
 
-            if (fromName.equals(mUtility.getFromPreferences("UserName"))) {
+            if (commentFrom.equals(mUserName)) {
                 isSelf = true;
             }
-            int colonIndex = commentData.indexOf(":");
-            commentData = commentData.substring(colonIndex+1);
+            int colonIndex = commentData.trim().indexOf(":");
+            commentData = commentData.substring(colonIndex+1).trim();
+            createNewCommentNotification(commentFrom);
 
-            Comment comment = new Comment(fromName, commentData, isSelf);
-            appendMessage(comment);
+            Comment comment = new Comment(commentFrom, commentData, isSelf);
+            appendMessage(id,comment);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-
     }
+
+//    private void parseMessage(String taskString) {
+//        boolean isSelf = false;
+//        try {
+//            JSONObject jsonObject = new JSONObject(taskString);
+//            String fromName = jsonObject.getString("name");
+//            String commentData = jsonObject.getString("msg");
+//
+//            if (fromName.equals(mUserName)) {
+//                isSelf = true;
+//            }
+//            int colonIndex = commentData.trim().indexOf(":");
+//            commentData = commentData.substring(colonIndex+1);
+//
+//            Comment comment = new Comment(fromName, commentData, isSelf);
+//            appendMessage(comment);
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
 
     private void sendMessageToServer(String inputString) {
-        if( mSocket != null)
-            mSocket.emit("sendmessage",inputString);
+        String commentTo="";
+        if( mSocket != null) {
+            // mSocket.emit("sendmessage",inputString);
+            // pass taskid, commentTo and inputString as json object;
+            if(mTask.getAssignByName().equals(mUserName)){
+                commentTo = mTask.getAssignToName();
+            }else if(mTask.getAssignToName().equals(mUserName)){
+                commentTo = mTask.getAssignByName();
+            }
+
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("id",mTask.getId());
+                jsonObject.put("comment",inputString);
+                jsonObject.put("commentTo",commentTo);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            mSocket.emit("newComment", jsonObject);
+        }
     }
 
-    private void appendMessage(final Comment comment) {
+    private void appendMessage(final String id, final Comment comment) {
         runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
+                if(mTask.getId().equals(id)){
                 mCommentList.add(comment);
                 mAdapter.notifyDataSetChanged();
+                }
             }
         });
     }

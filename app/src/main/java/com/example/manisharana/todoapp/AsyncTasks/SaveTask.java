@@ -83,10 +83,6 @@ public class SaveTask extends AsyncTask<Task, String, String> {
         return null;
     }
 
-    private void registerSocketListeners(final Task task) {
-        Log.i(LOG_TAG,"On connected");
-    }
-
     private JSONObject getJsonObject(String assignToName, String assignByName) {
         JSONObject jsonObject = new JSONObject();
         try {

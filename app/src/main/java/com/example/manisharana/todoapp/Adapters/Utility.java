@@ -25,8 +25,6 @@ public class Utility {
 
     private static final TimeZone timeZone;
     private static final String MY_PREFS_NAME = "MyPrefsFile";
-    private static final String KEY_SESSION_ID = "sessionID";
-    private static final String FLAG_MESSAGE = "message";
     private final Context mContext;
     private SharedPreferences sharedPreferences;
 
@@ -104,16 +102,6 @@ public class Utility {
 
     public static Calendar getCalendarInstance() {
         return getInstance(timeZone);
-    }
-
-    public void storeSessionId(String sessionId) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(KEY_SESSION_ID, sessionId);
-        editor.commit();
-    }
-
-    public String getSessionId() {
-        return sharedPreferences.getString(KEY_SESSION_ID, null);
     }
 
     public void showAlertDialog(String message) {

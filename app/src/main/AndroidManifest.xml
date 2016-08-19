@@ -48,7 +48,7 @@
         <activity android:name=".Activities.RequestActivity" />
         <activity android:name=".Activities.TaskListActivity"/>
         <activity android:name=".Activities.ContactActivity" android:label="Contact List"/>
-        <activity android:name=".Activities.TaskCommentListActivity"/>
+        <activity android:name=".Activities.TaskCommentListActivity" android:parentActivityName=".Activities.TaskListActivity"/>
 
         <provider
             android:authorities="com.example.manisharana.todoapp"
