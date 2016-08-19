@@ -41,6 +41,12 @@ public class TaskCommentListActivity extends AppCompatActivity {
             mTask = (Task) intent.getSerializableExtra("Task");
             if (mTask != null) {
                 setTitle(mTask.getTitle());
+                if(mTask.getComments() == null){
+                    mCommentList = new ArrayList<Comment>();
+                }else{
+                    mCommentList = mTask.getComments();
+
+                }
             }
 
         }
@@ -54,7 +60,6 @@ public class TaskCommentListActivity extends AppCompatActivity {
 
 
         connectWebSocket();
-        mCommentList = new ArrayList<Comment>();
         mAdapter = new CommentListAdapter(this, mCommentList);
         mListview.setAdapter(mAdapter);
 

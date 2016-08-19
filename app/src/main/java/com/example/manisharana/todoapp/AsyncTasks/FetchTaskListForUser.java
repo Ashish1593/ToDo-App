@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.example.manisharana.todoapp.Adapters.TaskListAdapter;
 import com.example.manisharana.todoapp.Adapters.Utility;
+import com.example.manisharana.todoapp.Models.Comment;
 import com.example.manisharana.todoapp.Models.Task;
 import com.example.manisharana.todoapp.R;
 import com.squareup.okhttp.Callback;
@@ -65,8 +66,9 @@ public class FetchTaskListForUser extends AsyncTask<String, String, Void> implem
     @Override
     protected void onPostExecute(Void s) {
         super.onPostExecute(s);
+        dialog.show();
         taskListAdapter.swap(tasks);
-        dialog.cancel();
+        dialog.dismiss();
     }
 
     @Override
@@ -85,10 +87,13 @@ public class FetchTaskListForUser extends AsyncTask<String, String, Void> implem
                 String title = taskData.getString("title");
                 String date = taskData.getString("date");
                 boolean status = taskData.getBoolean("status");
+                String commentString = taskData.getString("comments");
+                String assgnByName = taskData.getString("assgnByName");
                 String assgnByPhon = taskData.getString("assgnByPhon");
                 String assgnToName = taskData.getString("assgnToName");
                 String assgnToPhon = taskData.getString("assgnToPhon");
-                Task task = new Task(title,taskId,date,status,"",assgnByPhon,assgnToName,assgnToPhon);
+                ArrayList<Comment> comments = new Utility(context).getCommentList(commentString);
+                Task task = new Task(title,taskId,date,status,comments,assgnByName,assgnByPhon,assgnToName,assgnToPhon);
                 tasks.add(task);
             }
 

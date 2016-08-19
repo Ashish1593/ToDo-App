@@ -34,7 +34,7 @@ import java.util.ArrayList;
 public class ToDoSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String LOG_TAG = ToDoSyncAdapter.class.getSimpleName();
     private OkHttpClient client;
-    public static final int SYNC_INTERVAL = 60 * 180;
+    public static final int SYNC_INTERVAL = 60 * 2;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
 
 
@@ -46,6 +46,7 @@ public class ToDoSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
         Log.d(LOG_TAG, "onPerformSync Called.");
+        
 
         client = new OkHttpClient();
         Utility mUtility = new Utility(getContext());

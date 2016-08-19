@@ -6,12 +6,15 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 
+import com.example.manisharana.todoapp.Models.Comment;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -153,6 +156,28 @@ public class Utility {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
         df.setTimeZone(timeZone);
         return df.format(date);
+    }
+
+    public ArrayList<Comment> getCommentList(String comments) {
+        ArrayList<Comment> commentList = new ArrayList<>();
+
+        if (comments.isEmpty()) {
+            commentList = null;
+        } else {
+            String[] commentArray = comments.trim().split("\n");
+            for (String comment : commentArray) {
+                String[] splitCom = comment.trim().split(":");
+                String fromName = splitCom[0];
+                String msg = splitCom[1];
+                boolean isSelf = true;
+                if (!fromName.equals(getFromPreferences("UserName"))) {
+                    isSelf = false;
+                }
+
+                commentList.add(new Comment(fromName, msg, isSelf));
+            }
+        }
+        return commentList;
     }
 }
 

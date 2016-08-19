@@ -14,9 +14,11 @@ import android.widget.TimePicker;
 
 import com.example.manisharana.todoapp.Adapters.Utility;
 import com.example.manisharana.todoapp.AsyncTasks.SaveTask;
+import com.example.manisharana.todoapp.Models.Comment;
 import com.example.manisharana.todoapp.Models.Task;
 import com.example.manisharana.todoapp.R;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -193,10 +195,11 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             mPhoneNumber = myPhoneNumber;
         }
 
+
         if (mTask.getId().equals("")) {
-            return new Task(title, mSelectedTimeInMillis, true, me, myPhoneNumber, mContactName, mPhoneNumber);
+            return new Task(title, mSelectedTimeInMillis, true,null,me, myPhoneNumber, mContactName, mPhoneNumber);
         } else {
-            return new Task(title, mTask.getId(), mSelectedTimeInMillis, true, mTask.getAssignByName(), mTask.getAssignToName(), mContactName, mPhoneNumber);
+            return new Task(title, mTask.getId(), mSelectedTimeInMillis, true,null, mTask.getAssignByName(), mTask.getAssignToName(), mContactName, mPhoneNumber);
         }
 
     }
