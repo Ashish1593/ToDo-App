@@ -68,6 +68,7 @@ public class FetchTaskListForUser extends AsyncTask<String, String, Void> implem
         super.onPostExecute(s);
         dialog.show();
         taskListAdapter.swap(tasks);
+        taskListAdapter.notifyDataSetChanged();
         dialog.cancel();
     }
 

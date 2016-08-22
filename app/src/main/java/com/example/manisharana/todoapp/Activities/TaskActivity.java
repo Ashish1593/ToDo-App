@@ -17,6 +17,7 @@ import com.example.manisharana.todoapp.AsyncTasks.SaveTask;
 import com.example.manisharana.todoapp.Models.Comment;
 import com.example.manisharana.todoapp.Models.Task;
 import com.example.manisharana.todoapp.R;
+import com.example.manisharana.todoapp.Sync.ToDoSyncAdapter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,6 +56,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
         getSupportActionBar().setElevation(0);
+        ToDoSyncAdapter.initializeSyncAdapter(this);
+
         Calendar cal = Utility.getCalendarInstance();
         mUtility = new Utility(this);
 

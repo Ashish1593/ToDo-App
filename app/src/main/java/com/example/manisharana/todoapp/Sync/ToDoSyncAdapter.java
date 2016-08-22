@@ -34,7 +34,7 @@ import java.util.ArrayList;
 public class ToDoSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String LOG_TAG = ToDoSyncAdapter.class.getSimpleName();
     private OkHttpClient client;
-    public static final int SYNC_INTERVAL = 60 * 2;
+    public static final int SYNC_INTERVAL = 60 * 10;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
 
 

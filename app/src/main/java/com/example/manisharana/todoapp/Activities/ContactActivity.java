@@ -15,10 +15,6 @@ public class ContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
         getSupportActionBar().setElevation(0);
-        ProgressDialog progressDialog = new Utility(this).getProgressDialog("Fetching Contacts");
-        progressDialog.show();
-        ToDoSyncAdapter.initializeSyncAdapter(this);
-        progressDialog.dismiss();
     }
 
 
