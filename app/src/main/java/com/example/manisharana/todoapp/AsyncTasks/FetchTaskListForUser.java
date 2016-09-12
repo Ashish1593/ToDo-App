@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 
@@ -25,63 +26,37 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class FetchTaskListForUser extends AsyncTask<String, String, Void> implements Callback {
+public class FetchTaskListForUser extends AsyncTaskLoader<ArrayList<Task>> {
 
-    private ProgressDialog dialog;
-    private TaskListAdapter taskListAdapter;
+    private final String mPhoneNumber;
     private Context context;
     private OkHttpClient client;
     private ArrayList<Task> tasks;
 
-    public FetchTaskListForUser(Context activity, TaskListAdapter taskListAdapter) {
+    public FetchTaskListForUser(Context activity, String mPhoneNumber) {
+        super(activity);
         tasks = new ArrayList<>();
         this.context = activity;
-        this.taskListAdapter = taskListAdapter;
-        this.dialog = new Utility(context).getProgressDialog("Fetching Tasklist");
+        this.mPhoneNumber = mPhoneNumber;
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        dialog.show();
-    }
-
-    @Override
-    protected Void doInBackground(String... args) {
+    public ArrayList<Task> loadInBackground() {
         client = new OkHttpClient();
         final HttpUrl url = HttpUrl.parse(context.getString(R.string.sample_api_base_url)).newBuilder()
                 .addPathSegment("api")
                 .addPathSegment("tasks")
-                .addEncodedPathSegment(args[0])
+                .addEncodedPathSegment(mPhoneNumber)
                 .build();
         final Request request = new Request.Builder()
                 .url(url)
                 .get()
                 .build();
-        client.newCall(request).enqueue(this);
-
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void s) {
-        super.onPostExecute(s);
-        dialog.show();
-        taskListAdapter.swap(tasks);
-        taskListAdapter.notifyDataSetChanged();
-        dialog.cancel();
-    }
-
-    @Override
-    public void onFailure(Request request, IOException e) {
-        Log.i("Error","Error in getting tasklist");
-    }
-
-    @Override
-    public void onResponse(Response response) throws IOException {
         try {
-            JSONArray jsonArray = new JSONArray(response.body().string());
-            for(int i=0;i<jsonArray.length();i++){
+            Response response = client.newCall(request).execute();
+            String result = response.body().string();
+            JSONArray jsonArray = new JSONArray(result);
+            for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject object = jsonArray.getJSONObject(i);
                 String taskId = object.getString("id");
                 JSONObject taskData = object.getJSONObject("data");
@@ -94,15 +69,17 @@ public class FetchTaskListForUser extends AsyncTask<String, String, Void> implem
                 String assgnToName = taskData.getString("assgnToName");
                 String assgnToPhon = taskData.getString("assgnToPhon");
                 ArrayList<Comment> comments = new Utility(context).getCommentList(commentString);
-                Task task = new Task(title,taskId,date,status,comments,assgnByName,assgnByPhon,assgnToName,assgnToPhon);
+                Task task = new Task(title, taskId, date, status, comments, assgnByName, assgnByPhon, assgnToName, assgnToPhon);
                 tasks.add(task);
-            }
 
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        return tasks;
 
     }
 }

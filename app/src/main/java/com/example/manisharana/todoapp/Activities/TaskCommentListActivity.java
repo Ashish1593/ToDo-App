@@ -86,7 +86,6 @@ public class TaskCommentListActivity extends AppCompatActivity {
             @Override
             public void call(Object... args) {
                 Log.i("on new message",args[0].toString());
-               // parseMessage(args[0].toString());
             }
 
         }).on("notifyComment", new Emitter.Listener() {
@@ -96,7 +95,6 @@ public class TaskCommentListActivity extends AppCompatActivity {
                 parseComment(args[0].toString());
             }
         });
-        mSocket.connect();
     }
 
     private void createNewCommentNotification(String commentFrom) {
@@ -142,34 +140,10 @@ public class TaskCommentListActivity extends AppCompatActivity {
 
     }
 
-//    private void parseMessage(String taskString) {
-//        boolean isSelf = false;
-//        try {
-//            JSONObject jsonObject = new JSONObject(taskString);
-//            String fromName = jsonObject.getString("name");
-//            String commentData = jsonObject.getString("msg");
-//
-//            if (fromName.equals(mUserName)) {
-//                isSelf = true;
-//            }
-//            int colonIndex = commentData.trim().indexOf(":");
-//            commentData = commentData.substring(colonIndex+1);
-//
-//            Comment comment = new Comment(fromName, commentData, isSelf);
-//            appendMessage(comment);
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//    }
 
     private void sendMessageToServer(String inputString) {
         String commentTo="";
         if( mSocket != null) {
-            // mSocket.emit("sendmessage",inputString);
-            // pass taskid, commentTo and inputString as json object;
             if(mTask.getAssignByName().equals(mUserName)){
                 commentTo = mTask.getAssignToName();
             }else if(mTask.getAssignToName().equals(mUserName)){
