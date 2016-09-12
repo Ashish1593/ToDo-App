@@ -181,6 +181,11 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
+    public void clearData() {
+        tasks.clear();
+        notifyDataSetChanged();
+    }
+
 
     public class TaskViewHolder extends RecyclerView.ViewHolder {
 

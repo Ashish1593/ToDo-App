@@ -87,5 +87,4 @@ public class TaskListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
 }

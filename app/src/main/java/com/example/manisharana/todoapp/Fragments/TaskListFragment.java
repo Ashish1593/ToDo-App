@@ -3,6 +3,8 @@ package com.example.manisharana.todoapp.Fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
@@ -10,6 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.manisharana.todoapp.Adapters.TaskListAdapter;
 import com.example.manisharana.todoapp.Adapters.Utility;
@@ -19,31 +23,31 @@ import com.example.manisharana.todoapp.R;
 
 import java.util.ArrayList;
 
-public class TaskListFragment extends Fragment {
+public class TaskListFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<Task>> {
 
-    private static final String LOG_TAG = TaskListFragment.class.getSimpleName();
+    private static final int TASKS_LOADER_ID = 100;
     private TaskListAdapter taskListAdapter;
-    private Utility mUtility;
+    private String mPhoneNumber;
+    private TextView mTextViewError;
+    private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_task_list, container, false);
-        mUtility = new Utility(getActivity());
+        mPhoneNumber = new Utility(getActivity()).getFromPreferences("PhoneNumber");
+        mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
 
         taskListAdapter = new TaskListAdapter(getActivity(), new ArrayList<Task>());
 
-        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view_task_list);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_view_task_list);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), OrientationHelper.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(taskListAdapter);
-
-        String phoneNumber = mUtility.getFromPreferences("PhoneNumber");
-        FetchTaskListForUser fetchTaskListForUser = new FetchTaskListForUser(getActivity(), taskListAdapter);
-        fetchTaskListForUser.execute(phoneNumber);
-
+        mTextViewError = (TextView)rootView.findViewById(R.id.text_view_error);
         return rootView;
     }
 
@@ -52,5 +56,32 @@ public class TaskListFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(TASKS_LOADER_ID,null,this).forceLoad();
+        super.onActivityCreated(savedInstanceState);
+    }
 
+    @Override
+    public Loader<ArrayList<Task>> onCreateLoader(int id, Bundle args) {
+        return new FetchTaskListForUser(getActivity(),mPhoneNumber);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<Task>> loader, ArrayList<Task> data) {
+        if(data != null && !data.isEmpty()) {
+            mTextViewError.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.GONE);
+            taskListAdapter.swap(data);
+        }else{
+            mRecyclerView.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.GONE);
+            mTextViewError.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ArrayList<Task>> loader) {
+        taskListAdapter.clearData();
+    }
 }
