@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="list_values">
+        <item> Home</item>
+        <item >Work</item>
+        <item>Personal</item>
+    </array>
+
+</resources>

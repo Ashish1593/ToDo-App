@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="task_title">Title</string>
+    <string name="task_time">Time</string>
+    <string name="task_date">Date</string>
+    <string name="task_desc">Add a note</string>
+    <string name="task_remind_me">Set Reminder</string>
+    <string name="at_symbol">\@</string>
+    <string name="view_labels">View Tags</string>
+</resources>
