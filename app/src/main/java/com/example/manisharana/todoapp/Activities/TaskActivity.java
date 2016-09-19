@@ -78,6 +78,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         mAddContactButton.setOnClickListener(this);
 
 
+
+
         if (getIntent() != null) {
             Intent intent = getIntent();
             mTask = (Task) intent.getSerializableExtra("Task");
@@ -94,6 +96,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         }
+
+
     }
 
     private void prepopulateTaskData(Task taskToBeEdited, Calendar cal) {
@@ -235,6 +239,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         Intent intent = new Intent(this, ContactActivity.class);
         startActivityForResult(intent, PICK_CONTACT);
+        finish();
     }
 
     // onTouchEvent () method gets called when User performs any touch event on screen
@@ -255,6 +260,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 if (x1 < x2) {
                     Intent intent = new Intent(this, TaskListActivity.class);
                     startActivity(intent);
+                    finish();
                     //Toast.makeText(this,"Left to Right Swap Performed",Toast.LENGTH_LONG).show();
                 }
 
@@ -262,6 +268,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 if (x1 > x2) {
                     Intent intent = new Intent(this, ContactActivity.class);
                     startActivityForResult(intent, PICK_CONTACT);
+                   finish();
+
                     //Toast.makeText(this,"Right to Left Swap Performed",Toast.LENGTH_LONG).show();
                 }
 

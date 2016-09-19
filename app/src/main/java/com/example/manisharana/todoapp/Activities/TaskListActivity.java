@@ -2,10 +2,12 @@ package com.example.manisharana.todoapp.Activities;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
@@ -31,6 +33,9 @@ public class TaskListActivity extends AppCompatActivity {
     private Utility mUtility;
 
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +45,35 @@ public class TaskListActivity extends AppCompatActivity {
         mSocket = ((MyApplication)getApplication()).getSocket();
         registerSocketListeners();
 
+
+
     }
+
+
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Really Exit?")
+                .setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        intent.addCategory(Intent.CATEGORY_HOME);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                        startActivity(intent);
+                        finish();
+                        System.exit(0);
+
+
+                    }
+                }).create().show();
+    }
+
 
     private void registerSocketListeners() {
         mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
@@ -134,6 +167,7 @@ public class TaskListActivity extends AppCompatActivity {
                     // Toast.makeText(this, "Left to Right Swap Performed", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(this, TaskActivity.class);
                     startActivity(intent);
+
                 }
 
                 // if UP to Down sweep event on screen

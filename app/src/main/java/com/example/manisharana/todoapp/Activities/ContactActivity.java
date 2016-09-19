@@ -1,17 +1,11 @@
 package com.example.manisharana.todoapp.Activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Toast;
 
-import com.example.manisharana.todoapp.Adapters.OnSwipeTouchListener;
-import com.example.manisharana.todoapp.Adapters.Utility;
 import com.example.manisharana.todoapp.R;
-import com.example.manisharana.todoapp.Sync.ToDoSyncAdapter;
 
 public class ContactActivity extends AppCompatActivity {
 
@@ -21,8 +15,6 @@ public class ContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
         getSupportActionBar().setElevation(0);
-
-
     }
 
 
@@ -32,11 +24,13 @@ public class ContactActivity extends AppCompatActivity {
     float x1, x2;
     float y1, y2;
 
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         onTouchEvent(ev);
         return super.dispatchTouchEvent(ev);
     }
+
 
     public boolean onTouchEvent(MotionEvent touchevent) {
         switch (touchevent.getAction()) {
@@ -55,6 +49,7 @@ public class ContactActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(this, TaskActivity.class);
                     startActivity(intent);
+                   finish();
                 }
 
                 // if right to left sweep event on screen

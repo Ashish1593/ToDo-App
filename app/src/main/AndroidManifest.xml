@@ -21,7 +21,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Activities.TaskActivity" android:label="Task" android:parentActivityName=".Activities.TaskListActivity"/>
+        <activity android:name=".Activities.TaskActivity" android:label="Task" android:parentActivityName=".Activities.TaskListActivity"
+           />
         <activity
             android:name="com.auth0.lock.LockActivity"
             android:theme="@style/Lock.Theme"
@@ -46,8 +47,9 @@
         <meta-data android:name="com.auth0.lock.client-id" android:value="@string/auth0_client_id"/>
         <meta-data android:name="com.auth0.lock.domain-url" android:value="@string/auth0_domain"/>
         <activity android:name=".Activities.RequestActivity" />
-        <activity android:name=".Activities.TaskListActivity"/>
-        <activity android:name=".Activities.ContactActivity" android:label="Contact List"/>
+        <activity android:name=".Activities.TaskListActivity"
+           />
+        <activity android:name=".Activities.ContactActivity" android:label="Contact List" />
         <activity android:name=".Activities.TaskCommentListActivity" android:parentActivityName=".Activities.TaskListActivity"/>
 
         <provider

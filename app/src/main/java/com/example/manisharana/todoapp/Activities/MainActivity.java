@@ -56,15 +56,20 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @Override
+    //1
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mUtility = new Utility(this);
 
         String accessToken = mUtility.getFromPreferences("AccessToken");
         if (accessToken != null) {
+            //2
             Intent taskListIntent = new Intent(this, TaskListActivity.class);
             startActivity(taskListIntent);
+
+            finish();
         } else {
             LockPasswordlessActivity.showFrom(MainActivity.this, LockPasswordlessActivity.MODE_SMS_CODE);
         }
@@ -192,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
                     // Toast.makeText(this, "Left to Right Swap Performed", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(this, TaskActivity.class);
                     startActivity(intent);
+                    finish();
                 }
 
                 // if UP to Down sweep event on screen
