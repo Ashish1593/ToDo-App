@@ -10,9 +10,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.manisharana.todoapp.Activities.ContactActivity;
 import com.example.manisharana.todoapp.Fragments.ContactListFragment;
 import com.example.manisharana.todoapp.R;
 import com.squareup.picasso.Picasso;
+
+import static com.example.manisharana.todoapp.Fragments.ContactListFragment.COL_CONTACT_NAME;
+import static com.example.manisharana.todoapp.Fragments.ContactListFragment.COL_CONTACT_PHONE_NUMBER;
+import static com.example.manisharana.todoapp.Fragments.ContactListFragment.COL_CONTACT_PHOTO;
+import static com.example.manisharana.todoapp.Fragments.ContactListFragment.COL_CONTACT_NAME;
+import static com.example.manisharana.todoapp.Fragments.ContactListFragment.COL_CONTACT_PHONE_NUMBER;
+import static com.example.manisharana.todoapp.Fragments.ContactListFragment.COL_CONTACT_PHOTO;
 
 public class ContactListAdapter extends CursorAdapter {
 
@@ -31,9 +39,9 @@ public class ContactListAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder vH = (ViewHolder) view.getTag();
-        vH.contactNameView.setText(cursor.getString(ContactListFragment.COL_CONTACT_NAME));
-        vH.phoneNumberView.setText(cursor.getString(ContactListFragment.COL_CONTACT_PHONE_NUMBER));
-        String url = cursor.getString(ContactListFragment.COL_CONTACT_PHOTO);
+        vH.contactNameView.setText(cursor.getString(COL_CONTACT_NAME));
+        vH.phoneNumberView.setText(cursor.getString(COL_CONTACT_PHONE_NUMBER));
+        String url = cursor.getString(COL_CONTACT_PHOTO);
         Picasso.with(mContext).load(url).into(vH.photoView);
     }
 
@@ -52,3 +60,8 @@ public class ContactListAdapter extends CursorAdapter {
     }
 
 }
+
+
+
+
+

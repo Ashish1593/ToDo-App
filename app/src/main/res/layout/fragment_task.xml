@@ -1,0 +1,175 @@
+
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!--<LinearLayout-->
+            <!--android:id="@+id/actionBar"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="5"-->
+            <!--android:background="@color/colorPrimary"-->
+            <!--android:elevation="5dp"-->
+            <!--android:orientation="horizontal" />-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <EditText
+                android:id="@+id/editText_task_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="@string/task_title"
+                android:minHeight="?android:attr/listPreferredItemHeight" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/editText_task_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:enabled="true"
+                    android:ems="8"
+                    android:hint="@string/task_date"
+                    android:inputType="date"
+                    android:minHeight="?android:attr/listPreferredItemHeightSmall" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:text="@string/at_symbol"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <EditText
+                    android:id="@+id/editText_task_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:focusable="false"
+                    android:enabled="true"
+                    android:clickable="true"
+                    android:ems="8"
+                    android:hint="@string/task_time"
+                    android:inputType="date"
+                    android:minHeight="?android:attr/listPreferredItemHeightSmall" />
+
+            </LinearLayout>
+
+            <!--<EditText-->
+            <!--android:id="@+id/editText_task_desc"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:hint="@string/task_desc"-->
+            <!--android:inputType="textMultiLine"-->
+            <!--android:minHeight="?android:attr/listPreferredItemHeight" />-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:padding="8dp">-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/editText_task_remind_me"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1.5"-->
+            <!--android:text="@string/task_remind_me"-->
+            <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
+            <!--android:textSize="16sp" />-->
+
+            <!--<Switch-->
+            <!--android:id="@+id/switch_remind_me"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.5" />-->
+            <!--</LinearLayout>-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingTop="8dp"
+                android:paddingRight="8dp"
+                android:paddingLeft="8dp">
+
+                <TextView
+                    android:id="@+id/text_view_set_reminder"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:textColor="#000000"
+                    android:text="@string/assign_task_to"
+                    android:textSize="16sp" />
+
+                <ImageButton
+                    android:id="@+id/image_button_assign_contact"
+                    android:background="@drawable/ic_social_person_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingRight="16dp"
+                android:paddingLeft="16dp">
+
+                <TextView
+                    android:id="@+id/text_view_assigned_contact_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/text_view_assigned_contact_phone_number"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".7"
+                    android:textColor="#000000"
+                    android:gravity="right"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fab_new_task"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="16dp"-->
+        <!--android:clickable="true"-->
+        <!--android:src="@drawable/ic_action_content_send"-->
+        <!--app:layout_anchor="@id/actionBar"-->
+        <!--app:layout_anchorGravity="bottom|right|end" />-->
+
+</android.support.design.widget.CoordinatorLayout>

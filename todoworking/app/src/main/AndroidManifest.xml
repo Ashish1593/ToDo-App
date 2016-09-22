@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.manisharana.todoapp">
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <application
+        android:allowBackup="true"
+        android:name=".Activities.MyApplication"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".Activities.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".Activities.TaskActivity" android:label="Task" android:parentActivityName=".Activities.TaskListActivity"/>
+        <activity
+            android:name="com.auth0.lock.LockActivity"
+            android:theme="@style/Lock.Theme"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="a0TninnEqXUn4UZDl5kt6enYjNGUpDH1a7" android:host="manisharana.au.auth0.com"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.auth0.lock.passwordless.LockPasswordlessActivity"
+            android:theme="@style/Lock.Theme"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
+
+        <activity android:name="com.auth0.lock.passwordless.CountryCodeActivity"
+            android:theme="@style/Lock.Theme"/>
+        <meta-data android:name="com.auth0.lock.client-id" android:value="@string/auth0_client_id"/>
+        <meta-data android:name="com.auth0.lock.domain-url" android:value="@string/auth0_domain"/>
+        <activity android:name=".Activities.RequestActivity" />
+        <activity android:name=".Activities.TaskListActivity"/>
+        <activity android:name=".Activities.ContactActivity" android:label="Contact List"/>
+        <activity android:name=".Activities.TaskCommentListActivity" android:parentActivityName=".Activities.TaskListActivity"/>
+
+        <provider
+            android:authorities="com.example.manisharana.todoapp"
+            android:syncable="true"
+            android:name=".Data.TaskProvider"
+            android:enabled="true"
+            android:exported="true"/>
+
+        <service
+            android:name=".Sync.ToDoAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+        <service
+            android:name="com.example.manisharana.todoapp.Sync.ToDoSyncService"
+            android:exported="true"
+            android:process=":sync">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+        <!--<service-->
+            <!--android:name=".FirebaseMessageService">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.google.firebase.MESSAGING_EVENT"/>-->
+            <!--</intent-filter>-->
+        <!--</service>-->
+        <!--<service-->
+            <!--android:name=".FirebaseIDService">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>-->
+            <!--</intent-filter>-->
+        <!--</service>-->
+    </application>
+
+</manifest>

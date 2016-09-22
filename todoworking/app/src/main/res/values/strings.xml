@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Task List</string>
+    <string name="task_title">Title</string>
+    <string name="task_time">Time</string>
+    <string name="task_date">Date</string>
+    <string name="task_desc">Add a note</string>
+    <string name="task_remind_me">Set Reminder</string>
+    <string name="at_symbol">\@</string>
+    <string name="title_activity_fab">Fab</string>
+    <string name="view_labels">View Tags</string>
+    <string name="error">Error</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="assign_task_to">Assign Task To</string>
+    <string name="auth0_client_id">TninnEqXUn4UZDl5kt6enYjNGUpDH1a7</string>
+    <string name="auth0_domain">manisharana.au.auth0.com</string>
+    <string name="welcome_greeting">Welcome</string>
+    <string name="try_it_button">Let\'s try it!</string>
+    <string name="logout_button">Logout</string>
+    <string name="sample_api_base_url">http://192.168.42.208:3000</string>
+    <string name="save_details">Save</string>
+    <string name="section_view_holder">section_view_holder</string>
+    <string name="item_view_holder">item_view_holder</string>
+    <string name="btn_send">Send</string>
+    <string name="sync_account_type">todoapp.example.com</string>
+    <string name="content_authority">com.example.manisharana.todoapp</string>
+</resources>

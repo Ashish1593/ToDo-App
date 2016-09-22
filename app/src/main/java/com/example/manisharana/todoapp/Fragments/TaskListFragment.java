@@ -1,23 +1,36 @@
 package com.example.manisharana.todoapp.Fragments;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.manisharana.todoapp.Activities.MyApplication;
 import com.example.manisharana.todoapp.Activities.TaskActivity;
+import com.example.manisharana.todoapp.Activities.TaskListActivity;
 import com.example.manisharana.todoapp.Adapters.TaskListAdapter;
 import com.example.manisharana.todoapp.Adapters.Utility;
 import com.example.manisharana.todoapp.AsyncTasks.FetchTaskListForUser;
@@ -26,7 +39,17 @@ import com.example.manisharana.todoapp.R;
 
 import java.util.ArrayList;
 
-public class TaskListFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<Task>> {
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+
+//import static com.example.manisharana.todoapp.R.id.fab_add_task;
+
+public class TaskListFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<Task>>, View.OnClickListener {
+
+
+    private static final String LOG_TAG = TaskListActivity.class.getSimpleName();
+    private Socket mSocket;
+    private Utility mUtility;
 
 
     private static final int TASKS_LOADER_ID = 100;
@@ -52,8 +75,80 @@ public class TaskListFragment extends Fragment implements LoaderManager.LoaderCa
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(taskListAdapter);
         mTextViewError = (TextView)rootView.findViewById(R.id.text_view_error);
-        return rootView;
+        mUtility = new Utility(getActivity());
+        mSocket = ((MyApplication)getActivity().getApplication()).getSocket();
+        registerSocketListeners();
+
+//        FloatingActionButton fab =(FloatingActionButton) rootView.findViewById(R.id.fab_add_task);
+//
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                navigateToTaskActivity();
+//            }
+//        });
+            return rootView;
     }
+
+
+    private void registerSocketListeners() {
+        mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                Log.i(LOG_TAG,"On call connected");
+                mSocket.emit("joinroom", mUtility.getFromPreferences("UserName"));
+            }
+
+        }).on("notify", new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                Log.i(LOG_TAG,"On new Task - notify");
+                createNotification(args[0].toString());
+            }
+
+        }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                Log.i(LOG_TAG,"On call disconnected");
+            }
+
+        });
+        mSocket.connect();
+    }
+
+    private void createNotification(String name) {
+        playBeep();
+        NotificationManager mNotificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getActivity());
+        mBuilder.setSmallIcon(R.mipmap.ic_launcher);
+        mBuilder.setContentTitle(getString(R.string.app_name));
+        mBuilder.setContentText("You have a new task assigned by "+name+"!!");
+        int notificationID = 100;
+        mNotificationManager.notify(notificationID, mBuilder.build());
+    }
+
+    private void playBeep() {
+        Uri defaultUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone ringtone = RingtoneManager.getRingtone(getActivity(), defaultUri);
+        ringtone.play();
+    }
+
+
+    public void navigateToTaskActivity() {
+
+        Fragment fragment = new TaskFragment();
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_task_list_view, fragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,4 +184,9 @@ public class TaskListFragment extends Fragment implements LoaderManager.LoaderCa
         taskListAdapter.clearData();
     }
 
+
+    @Override
+    public void onClick(View v) {
+
+    }
 }

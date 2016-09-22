@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:baselineAligned="true"
+    android:padding="16dp"
+    android:layout_weight="3">
+    <com.makeramen.roundedimageview.RoundedImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/image_view_contact_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_centerVertical="true"
+        android:scaleType="fitCenter"
+        app:riv_border_width="2dp"
+        app:riv_border_color="#000"
+        app:riv_corner_radius="30dp"
+        />
+
+    <TextView
+        android:id="@+id/text_view_contact_name"
+        android:layout_width="match_parent"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="16sp"
+        android:text="Mnaisha"
+        android:paddingLeft="20dp"
+        android:gravity="center_vertical"
+        android:minHeight="?android:attr/listPreferredItemHeightSmall"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/text_view_contact_phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="10dp"
+        android:gravity="center_vertical"
+        android:text="8050342347"
+        android:minHeight="?android:attr/listPreferredItemHeightSmall"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="16sp"
+        android:layout_weight="1" />
+
+</LinearLayout>

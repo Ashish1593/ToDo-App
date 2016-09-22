@@ -1,0 +1,66 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".Activities.RequestActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textColor="@color/colorAccent"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:text="@string/welcome_greeting"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true" />
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/profile_image"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_centerVertical="true"
+        android:scaleType="fitCenter"
+        app:riv_corner_radius="60dp"
+        />
+    <LinearLayout
+        android:id="@+id/info_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/profile_image"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="25dp"
+        android:orientation="vertical"
+        >
+        <EditText
+            android:id="@+id/username_label"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="sans-serif-condensed"
+            android:textColorHint="@color/colorAccent"
+            android:ellipsize="middle"
+            android:hint="UserName"
+            android:singleLine="true"
+            />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/call_api_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:clickable="true"
+        android:fontFamily="sans-serif-smallcaps"
+        android:onClick="sendUserDetailsToServer"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="@color/colorAccent"
+        android:text="@string/save_details"
+        android:textColor="@android:color/white"
+        />
+</RelativeLayout>

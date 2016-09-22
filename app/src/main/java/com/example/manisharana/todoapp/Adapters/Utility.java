@@ -40,7 +40,7 @@ public class Utility {
     public static String getFormattedTime(String dateInMillis) {
 
         Date date = getDateFromString(dateInMillis);
-        SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEEEEE, d MMM yyyy  HH:mm:ss");
+        SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEEEEE, d MMM yyyy ");
         shortenedDateFormat.setTimeZone(timeZone);
         String day = shortenedDateFormat.format(date.getTime());
         return day;
