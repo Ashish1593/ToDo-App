@@ -22,7 +22,7 @@ import com.auth0.lock.Lock;
 import com.auth0.lock.passwordless.LockPasswordlessActivity;
 import com.example.manisharana.todoapp.Adapters.Utility;
 import com.example.manisharana.todoapp.Adapters.ViewPagerAdapter;
-import com.example.manisharana.todoapp.Fragments.ContactListFragment;
+//import com.example.manisharana.todoapp.Fragments.ContactListFragment;
 import com.example.manisharana.todoapp.Fragments.TaskFragment;
 import com.example.manisharana.todoapp.Fragments.TaskListFragment;
 import com.example.manisharana.todoapp.Models.User;
@@ -48,6 +48,11 @@ public class MainActivity extends AppCompatActivity {
 
     public MainActivity() {
         fetchUserTask = new FetchUserTask(this);
+
+
+
+
+
     }
 
     private String pictureURL;
@@ -72,23 +77,18 @@ public class MainActivity extends AppCompatActivity {
         mUtility = new Utility(this);
         TaskListFragment fragmentOne = new TaskListFragment();
         TaskFragment fragmentTwo= new TaskFragment();
-        ContactListFragment fragmentThree = new ContactListFragment();
+        //ContactListFragment fragmentThree = new ContactListFragment();
 
         ViewPagerAdapter pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         pagerAdapter.addFragment(fragmentOne);
         pagerAdapter.addFragment(fragmentTwo);
-        pagerAdapter.addFragment(fragmentThree);
+       // pagerAdapter.addFragment(fragmentThree);
 
 
         String accessToken = mUtility.getFromPreferences("AccessToken");
         if (accessToken != null) {
             //2
-
-
-
-
-
                 ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
                 viewPager.setAdapter(pagerAdapter);
 
@@ -110,6 +110,11 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         broadcastManager.unregisterReceiver(authenticationReceiver);
     }
+
+
+
+
+
 
     public class FetchUserTask extends AsyncTask<String, User, User> {
 

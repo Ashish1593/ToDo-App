@@ -17,7 +17,7 @@
     <string name="welcome_greeting">Welcome</string>
     <string name="try_it_button">Let\'s try it!</string>
     <string name="logout_button">Logout</string>
-    <string name="sample_api_base_url">http://192.168.1.101:3000</string>
+    <string name="sample_api_base_url">http://192.168.42.180:3000</string>
     <string name="save_details">Save</string>
     <string name="section_view_holder">section_view_holder</string>
     <string name="item_view_holder">item_view_holder</string>

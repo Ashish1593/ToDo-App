@@ -158,7 +158,17 @@
 
             </LinearLayout>
 
+            <Button
+                android:id="@+id/assign_task"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="Assign Task"
+                android:layout_marginTop="36dp"
+               />
+
         </LinearLayout>
+
 
     </LinearLayout>
 

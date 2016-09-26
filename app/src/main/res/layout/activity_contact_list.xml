@@ -3,11 +3,19 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <fragment
+    <!--<fragment-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--class="com.example.manisharana.todoapp.Fragments.ContactListFragment"-->
+        <!--android:id="@+id/fragment_contact_list_view">-->
+    <!--</fragment>-->
+
+    <ListView
         android:layout_width="match_parent"
+        android:id="@+id/list_view_contact_list"
         android:layout_height="match_parent"
-        class="com.example.manisharana.todoapp.Fragments.ContactListFragment"
-        android:id="@+id/fragment_contact_list_view">
-    </fragment>
+        android:fastScrollEnabled="true"
+        android:divider="#00000000">
+    </ListView>
 
 </LinearLayout>

@@ -1,5 +1,9 @@
 package com.example.manisharana.todoapp.Fragments;
 
+import android.app.Activity;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -8,10 +12,12 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -19,7 +25,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.manisharana.todoapp.Activities.ContactActivity;
+//import com.example.manisharana.todoapp.Activities.ContactActivity;
 import com.example.manisharana.todoapp.Adapters.Utility;
 import com.example.manisharana.todoapp.AsyncTasks.SaveTask;
 import com.example.manisharana.todoapp.Models.Comment;
@@ -31,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import static android.R.attr.name;
+import static android.R.attr.phoneNumber;
 import static android.app.Activity.RESULT_OK;
 
 
@@ -60,7 +68,8 @@ public class TaskFragment extends Fragment implements View.OnClickListener{
     private Utility mUtility;
     private TextView mTaskAssignedToView;
 
-
+    private String photoUri;
+    private String phoneNumber;
 
 
 
@@ -102,14 +111,14 @@ public class TaskFragment extends Fragment implements View.OnClickListener{
             }
 
         }
-     //   FloatingActionButton fab =(FloatingActionButton) rootView.findViewById(R.id.fab_new_task);
+       Button fab =(Button) rootView.findViewById(R.id.assign_task);
 
-       // fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                saveButtonClicked(rootView) ;
-//            }
-//        });
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveButtonClicked(rootView) ;
+            }
+        });
 
         return rootView;
     }
@@ -227,26 +236,71 @@ public class TaskFragment extends Fragment implements View.OnClickListener{
         }
 
     }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_CONTACT && resultCode == RESULT_OK) {
-            mContactName = data.getStringExtra("UserName");
-            mPhoneNumber = data.getStringExtra("UserPhone");
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == PICK_CONTACT && resultCode == RESULT_OK) {
+//            mContactName = data.getStringExtra("UserName");
+//            mPhoneNumber = data.getStringExtra("UserPhone");
+//            mTaskAssignedToView.setText("Task Assigned To");
+//            mContactNameView.setText(mContactName);
+//            mContactPhoneNumberView.setText(mPhoneNumber);
+//
+//
+//        }
+//    }
+
+
+    public void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+
+        switch (reqCode) {
+            case (PICK_CONTACT) :
+                if (resultCode == Activity.RESULT_OK) {
+
+                    Uri contactData = data.getData();
+                    Cursor c =  getActivity().managedQuery(contactData, null, null, null, null);
+                    if (c.moveToFirst()) {
+
+
+                        String id =c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+
+                        String hasPhone =c.getString(c.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+
+                        if (hasPhone.equalsIgnoreCase("1")) {
+                            Cursor phones = getActivity().getContentResolver().query(
+                                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
+                                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = "+ id,
+                                    null, null);
+                            phones.moveToFirst();
+                            mPhoneNumber = phones.getString(phones.getColumnIndex("data1"));
+
+
+                        }
+                         mContactName = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+                        mContactPhoneNumberView.setText(mPhoneNumber);
+                        mContactNameView.setText(mContactName);
+
+                    }
+
             mTaskAssignedToView.setText("Task Assigned To");
-            mContactNameView.setText(mContactName);
-            mContactPhoneNumberView.setText(mPhoneNumber);
+                }
+                break;
         }
     }
 
+
     @Override
     public void onClick(View view) {
-        Intent intent = new Intent(getActivity(), ContactActivity.class);
+        Intent intent= new Intent(Intent.ACTION_PICK,  ContactsContract.Contacts.CONTENT_URI);
         startActivityForResult(intent, PICK_CONTACT);
 
-    }
 
 
-}
+    }}
+
+
+
 
 
